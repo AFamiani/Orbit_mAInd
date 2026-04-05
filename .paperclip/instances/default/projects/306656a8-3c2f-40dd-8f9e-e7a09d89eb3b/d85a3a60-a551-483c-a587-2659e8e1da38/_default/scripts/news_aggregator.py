@@ -275,21 +275,16 @@ def build_digest(
 # Beehiiv integration
 # ---------------------------------------------------------------------------
 
-def push_to_beehiiv(digest: dict, api_key: str, publication_id: str) -> None:
+def build_html_body(digest: dict) -> tuple:
     """
-    Create a draft post on Beehiiv from the digest.
-    API docs: https://developers.beehiiv.com/docs/v2
+    Build the HTML body and metadata for the newsletter digest.
+    Returns (week_label, title, body_html).
     """
-    if not digest.get("cover_story"):
-        print("[ERROR] No cover story in digest — cannot create Beehiiv draft.", file=sys.stderr)
-        return
-
     cover = digest["cover_story"]
     briefs = digest.get("briefs", [])
     launches = digest.get("upcoming_launches", [])
     apod = digest.get("apod")
 
-    # Build content body (HTML for Beehiiv)
     briefs_html = ""
     for b in briefs:
         briefs_html += f'<li><a href="{b["link"]}">{b["title"]}</a> — {b["summary"][:120]}…</li>\n'
@@ -329,12 +324,47 @@ def push_to_beehiiv(digest: dict, api_key: str, publication_id: str) -> None:
 {launches_html}
 {apod_html}
 """
+    week_label = datetime.now().strftime('%d %B %Y')
+    title = f"Orbita Weekly — {week_label}"
+    return week_label, title, body_html
+
+
+def save_html_digest(digest: dict, out_dir: str = "digests") -> str:
+    """Save the digest as a standalone HTML file. Returns the file path."""
+    os.makedirs(out_dir, exist_ok=True)
+    _, title, body_html = build_html_body(digest)
+    filename = f"{out_dir}/orbita-{datetime.now().strftime('%Y-%m-%d')}.html"
+    full_html = f"""<!DOCTYPE html>
+<html lang="it">
+<head><meta charset="utf-8"><title>{title}</title></head>
+<body style="max-width:700px;margin:auto;font-family:Georgia,serif;">
+<h1>{title}</h1>
+{body_html}
+</body>
+</html>"""
+    with open(filename, "w", encoding="utf-8") as f:
+        f.write(full_html)
+    return filename
+
+
+def push_to_beehiiv(digest: dict, api_key: str, publication_id: str) -> None:
+    """
+    Create a draft post on Beehiiv from the digest.
+    API docs: https://developers.beehiiv.com/docs/v2
+    Falls back to saving a local HTML file if the API returns 403 (plan restriction).
+    """
+    if not digest.get("cover_story"):
+        print("[ERROR] No cover story in digest — cannot create Beehiiv draft.", file=sys.stderr)
+        return
+
+    _, title, body_html = build_html_body(digest)
+    cover = digest["cover_story"]
 
     payload = {
-        "publication_id": publication_id,
-        "subject": f"🚀 Orbita Weekly — {datetime.now().strftime('%d %B %Y')}",
+        "title": title,
+        "subtitle": cover["title"][:100],
         "preview_text": cover["title"][:100],
-        "body": body_html,
+        "content": {"type": "html", "value": body_html},
         "status": "draft",
         "content_tags": ["space", "aeronautics", "weekly"],
     }
@@ -353,6 +383,21 @@ def push_to_beehiiv(digest: dict, api_key: str, publication_id: str) -> None:
         data = resp.json()
         post_id = data.get("data", {}).get("id", "unknown")
         print(f"[OK] Draft created on Beehiiv: post_id={post_id}")
+    elif resp.status_code == 403:
+        err = resp.json().get("errors", [{}])[0]
+        code = err.get("code", "")
+        print(
+            f"[WARN] Beehiiv API 403 ({code}): API post creation requires a paid plan.\n"
+            "       Saving HTML digest locally as fallback.",
+            file=sys.stderr,
+        )
+        path = save_html_digest(digest)
+        print(f"[OK] HTML digest saved to: {path}")
+        print(
+            "       Upload it manually at: https://app.beehiiv.com/posts/new\n"
+            "       Or upgrade your Beehiiv plan to enable API post creation.",
+            file=sys.stderr,
+        )
     else:
         print(f"[ERROR] Beehiiv API error {resp.status_code}: {resp.text}", file=sys.stderr)
 

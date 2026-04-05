@@ -15,7 +15,7 @@
 
   "api": {
     "base_url": "https://api.beehiiv.com/v2",
-    "publication_id": "REPLACE_WITH_PUBLICATION_ID",
+    "publication_id": "pub_bebc369c-8273-41a8-99b3-6c628f1cc5e9",
     "api_key_env": "BEEHIIV_API_KEY"
   },
 
@@ -68,8 +68,8 @@
     { "step": 2, "action": "Set publication name and language", "owner": "Board", "done": false },
     { "step": 3, "action": "Upload brand logo and set colors", "owner": "Board/UX", "done": false },
     { "step": 4, "action": "Configure custom domain DNS records", "owner": "Board", "done": false },
-    { "step": 5, "action": "Generate Beehiiv API key and share with CTO", "owner": "Board", "done": false },
-    { "step": 6, "action": "Fill in publication_id and api_key_env above", "owner": "CTO", "done": false },
+    { "step": 5, "action": "Generate Beehiiv API key and share with CTO", "owner": "Board", "done": true },
+    { "step": 6, "action": "Fill in publication_id and api_key_env above", "owner": "CTO", "done": true },
     { "step": 7, "action": "Deploy landing page to static host", "owner": "CTO", "done": false },
     { "step": 8, "action": "Test welcome email automation", "owner": "CTO", "done": false },
     { "step": 9, "action": "Run news_aggregator.py --output beehiiv for first draft", "owner": "CTO", "done": false },
