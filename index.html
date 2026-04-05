@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Orbita — Notizie spaziali e aeronautiche ogni settimana. Iscriviti alla newsletter.">
+  <title>Orbita — Newsletter Spaziale</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy: #0a0e1a;
+      --navy-mid: #0d1124;
+      --navy-light: #0f1f3d;
+      --blue: #1a3a6e;
+      --blue-accent: #3a7fd4;
+      --blue-light: #7eb8f7;
+      --text-primary: #c9d8f0;
+      --text-secondary: #8fa8c8;
+      --text-muted: #5a7fa8;
+      --border: #1e2a4a;
+    }
+
+    html { font-size: 16px; scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--navy);
+      color: var(--text-primary);
+      font-family: 'Georgia', serif;
+      line-height: 1.6;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Stars background */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        radial-gradient(1px 1px at 10% 20%, rgba(126,184,247,0.6) 0%, transparent 100%),
+        radial-gradient(1px 1px at 30% 70%, rgba(126,184,247,0.4) 0%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 50% 40%, rgba(200,220,255,0.5) 0%, transparent 100%),
+        radial-gradient(1px 1px at 70% 10%, rgba(126,184,247,0.5) 0%, transparent 100%),
+        radial-gradient(1px 1px at 85% 60%, rgba(126,184,247,0.3) 0%, transparent 100%),
+        radial-gradient(1px 1px at 20% 90%, rgba(126,184,247,0.4) 0%, transparent 100%),
+        radial-gradient(1px 1px at 60% 85%, rgba(200,220,255,0.5) 0%, transparent 100%),
+        radial-gradient(1px 1px at 90% 30%, rgba(126,184,247,0.6) 0%, transparent 100%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Layout */
+    .page {
+      position: relative;
+      z-index: 1;
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* Nav */
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 24px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .logo {
+      font-family: 'Arial', sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--blue-light);
+    }
+
+    .logo span { color: #fff; }
+
+    .nav-archive {
+      font-size: 12px;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-family: 'Arial', sans-serif;
+      text-transform: uppercase;
+    }
+
+    .nav-archive:hover { color: var(--blue-light); }
+
+    /* Hero */
+    .hero {
+      padding: 72px 0 56px;
+      text-align: center;
+    }
+
+    .hero-badge {
+      display: inline-block;
+      font-size: 11px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--blue-accent);
+      font-family: 'Arial', sans-serif;
+      border: 1px solid var(--blue);
+      border-radius: 20px;
+      padding: 5px 16px;
+      margin-bottom: 24px;
+    }
+
+    .hero h1 {
+      font-size: clamp(32px, 6vw, 52px);
+      line-height: 1.15;
+      color: #fff;
+      margin-bottom: 20px;
+      font-weight: normal;
+    }
+
+    .hero h1 em {
+      font-style: normal;
+      color: var(--blue-light);
+    }
+
+    .hero p {
+      font-size: 18px;
+      color: var(--text-secondary);
+      max-width: 480px;
+      margin: 0 auto 40px;
+    }
+
+    /* Signup form */
+    .signup-box {
+      background-color: var(--navy-mid);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 36px 40px;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+
+    .signup-box h2 {
+      font-size: 16px;
+      font-family: 'Arial', sans-serif;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    .signup-box p {
+      font-size: 13px;
+      color: var(--text-muted);
+      font-family: 'Arial', sans-serif;
+      margin-bottom: 20px;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 10px;
+    }
+
+    .form-row input[type="email"] {
+      flex: 1;
+      padding: 12px 16px;
+      background-color: #080c18;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text-primary);
+      font-size: 14px;
+      font-family: 'Arial', sans-serif;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .form-row input[type="email"]:focus {
+      border-color: var(--blue-accent);
+    }
+
+    .form-row input[type="email"]::placeholder {
+      color: var(--text-muted);
+    }
+
+    .form-row button {
+      padding: 12px 24px;
+      background-color: var(--blue);
+      color: var(--blue-light);
+      border: 1px solid var(--blue-accent);
+      border-radius: 6px;
+      font-size: 13px;
+      font-family: 'Arial', sans-serif;
+      letter-spacing: 1px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background-color 0.2s;
+    }
+
+    .form-row button:hover { background-color: #1e4a8a; }
+
+    .signup-note {
+      margin-top: 12px;
+      font-size: 11px;
+      color: var(--text-muted);
+      font-family: 'Arial', sans-serif;
+      text-align: center;
+    }
+
+    /* Beehiiv embed fallback */
+    .beehiiv-embed {
+      width: 100%;
+      border: none;
+      min-height: 80px;
+    }
+
+    /* Social proof */
+    .social-proof {
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      padding: 48px 0 40px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .stat {
+      text-align: center;
+    }
+
+    .stat-number {
+      font-size: 28px;
+      font-family: 'Arial', sans-serif;
+      font-weight: 700;
+      color: var(--blue-light);
+      display: block;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      font-family: 'Arial', sans-serif;
+    }
+
+    /* What's inside */
+    .what-inside {
+      padding: 48px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section-title {
+      font-size: 11px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--blue-accent);
+      font-family: 'Arial', sans-serif;
+      margin-bottom: 28px;
+    }
+
+    .features {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .feature {
+      background-color: var(--navy-mid);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px;
+    }
+
+    .feature-icon {
+      font-size: 24px;
+      margin-bottom: 10px;
+      display: block;
+    }
+
+    .feature h3 {
+      font-size: 14px;
+      font-family: 'Arial', sans-serif;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 6px;
+    }
+
+    .feature p {
+      font-size: 13px;
+      color: var(--text-muted);
+      font-family: 'Arial', sans-serif;
+      line-height: 1.5;
+    }
+
+    /* Channels */
+    .channels {
+      padding: 40px 0;
+      text-align: center;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .channels p {
+      font-size: 13px;
+      color: var(--text-muted);
+      font-family: 'Arial', sans-serif;
+      margin-bottom: 16px;
+    }
+
+    .channel-list {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .channel-badge {
+      font-size: 11px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      font-family: 'Arial', sans-serif;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 5px 14px;
+    }
+
+    /* Footer */
+    footer {
+      padding: 32px 0;
+      text-align: center;
+    }
+
+    footer p {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-family: 'Arial', sans-serif;
+      margin-bottom: 6px;
+    }
+
+    footer a { color: var(--blue-accent); text-decoration: none; }
+
+    @media (max-width: 560px) {
+      .features { grid-template-columns: 1fr; }
+      .form-row { flex-direction: column; }
+      .social-proof { gap: 24px; }
+      .signup-box { padding: 24px 20px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+
+    <!-- NAV -->
+    <nav>
+      <span class="logo">Or<span>bita</span></span>
+      <a href="#archivio" class="nav-archive">Archivio</a>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-badge">&#127760; Newsletter Settimanale</div>
+      <h1>Lo spazio,<br>ogni domenica<br>nella tua <em>inbox</em></h1>
+      <p>
+        Notizie su lanci, missioni, scoperte scientifiche e industria spaziale —
+        curate ogni settimana per chi vuole capire l'universo.
+      </p>
+
+      <!-- SIGNUP BOX -->
+      <div class="signup-box">
+        <h2>Iscriviti gratuitamente</h2>
+        <p>Ogni domenica mattina. Niente spam, cancellazione in un click.</p>
+
+        <!--
+          OPTION A: Native form (replace action URL with your backend/Beehiiv endpoint)
+          OPTION B: Replace this entire section with Beehiiv embed snippet from:
+                    Beehiiv > Settings > Embed & Share > Copy embed code
+        -->
+        <form id="signup-form" onsubmit="handleSignup(event)">
+          <div class="form-row">
+            <input
+              type="email"
+              id="email-input"
+              placeholder="la.tua@email.com"
+              required
+              autocomplete="email"
+            >
+            <button type="submit" id="submit-btn">Iscriviti &rarr;</button>
+          </div>
+        </form>
+        <p class="signup-note">Gi&agrave; {{SUBSCRIBER_COUNT}}+ lettori &middot; Gratis per sempre</p>
+      </div>
+    </section>
+
+    <!-- SOCIAL PROOF -->
+    <div class="social-proof">
+      <div class="stat">
+        <span class="stat-number" id="sub-count">{{SUBSCRIBER_COUNT}}+</span>
+        <span class="stat-label">Iscritti</span>
+      </div>
+      <div class="stat">
+        <span class="stat-number">5</span>
+        <span class="stat-label">Canali social</span>
+      </div>
+      <div class="stat">
+        <span class="stat-number">Ogni dom</span>
+        <span class="stat-label">Cadenza</span>
+      </div>
+    </div>
+
+    <!-- WHAT'S INSIDE -->
+    <section class="what-inside">
+      <p class="section-title">Cosa trovi ogni settimana</p>
+      <div class="features">
+        <div class="feature">
+          <span class="feature-icon">&#11088;</span>
+          <h3>Copertina</h3>
+          <p>La notizia della settimana analizzata in profondità.</p>
+        </div>
+        <div class="feature">
+          <span class="feature-icon">&#9671;</span>
+          <h3>Brevi</h3>
+          <p>Cinque-sette news veloci dall'industria e dalla ricerca.</p>
+        </div>
+        <div class="feature">
+          <span class="feature-icon">&#128640;</span>
+          <h3>Lanci</h3>
+          <p>Il calendario dei prossimi lanci spaziali con aggiornamenti in tempo reale.</p>
+        </div>
+        <div class="feature">
+          <span class="feature-icon">&#128279;</span>
+          <h3>Link</h3>
+          <p>I migliori articoli e risorse della settimana, selezionati dalla redazione.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SOCIAL CHANNELS -->
+    <section class="channels">
+      <p>Seguici anche sui social per aggiornamenti quotidiani</p>
+      <div class="channel-list">
+        <span class="channel-badge">&#120143; X / Twitter</span>
+        <span class="channel-badge">in LinkedIn</span>
+        <span class="channel-badge">&#128247; Instagram</span>
+        <span class="channel-badge">&#9654; YouTube</span>
+        <span class="channel-badge">&#127918; TikTok</span>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+      <p><strong>Orbita</strong> &mdash; Notizie spaziali e aeronautiche</p>
+      <p>
+        <a href="{{PRIVACY_URL}}">Privacy</a> &middot;
+        <a href="{{CONTACT_URL}}">Contatti</a>
+      </p>
+      <p style="margin-top: 16px; font-size: 11px; color: #2a3a52;">
+        &copy; {{YEAR}} Orbita. Tutti i diritti riservati.
+      </p>
+    </footer>
+
+  </div><!-- /.page -->
+
+  <script>
+    async function handleSignup(e) {
+      e.preventDefault();
+      const email = document.getElementById('email-input').value.trim();
+      const btn = document.getElementById('submit-btn');
+
+      if (!email) return;
+
+      btn.disabled = true;
+      btn.textContent = 'Iscrizione in corso...';
+
+      try {
+        /*
+         * Replace this with one of:
+         * A) Beehiiv JS embed (recommended) — paste embed snippet from Beehiiv dashboard
+         * B) Your own API endpoint that calls POST /api/subscriber with { email }
+         * C) Direct Beehiiv API call (requires CORS proxy if from browser)
+         *
+         * Example Beehiiv API call (via server-side proxy):
+         *   POST /api/subscribe → server calls beehiiv.com/v2/publications/{id}/subscriptions
+         */
+
+        // Placeholder: simulate success for now
+        await new Promise(r => setTimeout(r, 800));
+
+        // Success state
+        const form = document.getElementById('signup-form');
+        form.innerHTML = `
+          <p style="color: #4caf82; font-family: Arial, sans-serif; font-size: 15px; text-align: center;">
+            &#10003; Iscrizione confermata! Controlla la tua email.
+          </p>`;
+
+      } catch (err) {
+        btn.disabled = false;
+        btn.textContent = 'Iscriviti →';
+        alert('Errore durante l\'iscrizione. Riprova tra poco.');
+      }
+    }
+
+    // Update dynamic values
+    document.querySelectorAll('[id="sub-count"]').forEach(el => {
+      // Replace {{SUBSCRIBER_COUNT}} with actual count from Beehiiv API if desired
+    });
+  </script>
+</body>
+</html>
