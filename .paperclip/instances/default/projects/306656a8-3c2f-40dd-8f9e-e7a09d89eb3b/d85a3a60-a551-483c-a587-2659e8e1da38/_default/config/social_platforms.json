@@ -1,0 +1,77 @@
+{
+  "_comment": "Orbita social media platform credentials. Set each API key via environment variables (preferred) or directly here. DO NOT commit real credentials.",
+  "platforms": {
+    "twitter": {
+      "enabled": false,
+      "env": {
+        "api_key": "TWITTER_API_KEY",
+        "api_secret": "TWITTER_API_SECRET",
+        "access_token": "TWITTER_ACCESS_TOKEN",
+        "access_token_secret": "TWITTER_ACCESS_TOKEN_SECRET",
+        "bearer_token": "TWITTER_BEARER_TOKEN"
+      },
+      "settings": {
+        "max_chars": 280,
+        "thread_on_overflow": true,
+        "default_hashtags": ["#Space", "#Spazio", "#Aeronautica", "#AstroNews"]
+      }
+    },
+    "linkedin": {
+      "enabled": false,
+      "env": {
+        "access_token": "LINKEDIN_ACCESS_TOKEN",
+        "organization_id": "LINKEDIN_ORGANIZATION_ID"
+      },
+      "settings": {
+        "max_chars": 3000,
+        "default_hashtags": ["#Space", "#Aerospace", "#SpaceNews", "#Spazio"]
+      }
+    },
+    "instagram": {
+      "enabled": false,
+      "env": {
+        "access_token": "INSTAGRAM_ACCESS_TOKEN",
+        "instagram_account_id": "INSTAGRAM_ACCOUNT_ID"
+      },
+      "settings": {
+        "max_caption_chars": 2200,
+        "default_hashtags": [
+          "#space", "#spazio", "#astronomia", "#nasa", "#esa",
+          "#razzo", "#astronauta", "#universo", "#cosmo", "#scienza"
+        ]
+      }
+    },
+    "youtube": {
+      "enabled": false,
+      "env": {
+        "client_secrets_file": "YOUTUBE_CLIENT_SECRETS_FILE",
+        "channel_id": "YOUTUBE_CHANNEL_ID"
+      },
+      "settings": {
+        "default_category_id": "28",
+        "default_tags": ["space", "spazio", "aerospace", "news", "orbita"],
+        "privacy_status": "public"
+      }
+    },
+    "tiktok": {
+      "enabled": false,
+      "env": {
+        "access_token": "TIKTOK_ACCESS_TOKEN",
+        "open_id": "TIKTOK_OPEN_ID"
+      },
+      "settings": {
+        "max_caption_chars": 2200,
+        "default_hashtags": ["#space", "#spazio", "#nasa", "#razzo", "#scienza"]
+      }
+    }
+  },
+  "scheduling": {
+    "default_post_times_utc": ["08:00", "13:00", "18:00"],
+    "timezone": "Europe/Rome",
+    "max_posts_per_day": 3
+  },
+  "analytics": {
+    "log_file": "logs/social_analytics.json",
+    "track_metrics": ["impressions", "likes", "shares", "comments", "clicks"]
+  }
+}
