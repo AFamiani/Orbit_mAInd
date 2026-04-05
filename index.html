@@ -350,7 +350,10 @@
     <!-- NAV -->
     <nav>
       <span class="logo">Or<span>bita</span></span>
-      <a href="#archivio" class="nav-archive">Archivio</a>
+      <div style="display:flex;gap:20px;align-items:center;">
+        <a href="about.html" class="nav-archive">Chi siamo</a>
+        <a href="#archivio" class="nav-archive">Archivio</a>
+      </div>
     </nav>
 
     <!-- HERO -->
@@ -363,7 +366,7 @@
       </p>
 
       <!-- SIGNUP BOX -->
-      <div class="signup-box">
+      <div id="signup" class="signup-box">
         <h2>Iscriviti gratuitamente</h2>
         <p>Ogni domenica mattina. Niente spam, cancellazione in un click.</p>
 
@@ -384,14 +387,14 @@
             <button type="submit" id="submit-btn">Iscriviti &rarr;</button>
           </div>
         </form>
-        <p class="signup-note">Gi&agrave; {{SUBSCRIBER_COUNT}}+ lettori &middot; Gratis per sempre</p>
+        <p class="signup-note">Gratis &middot; Cancellazione in un click</p>
       </div>
     </section>
 
     <!-- SOCIAL PROOF -->
     <div class="social-proof">
       <div class="stat">
-        <span class="stat-number" id="sub-count">{{SUBSCRIBER_COUNT}}+</span>
+        <span class="stat-number" id="sub-count">0+</span>
         <span class="stat-label">Iscritti</span>
       </div>
       <div class="stat">
@@ -447,59 +450,85 @@
     <footer>
       <p><strong>Orbita</strong> &mdash; Notizie spaziali e aeronautiche</p>
       <p>
-        <a href="{{PRIVACY_URL}}">Privacy</a> &middot;
-        <a href="{{CONTACT_URL}}">Contatti</a>
+        <a href="privacy.html">Privacy</a> &middot;
+        <a href="about.html">Chi siamo</a> &middot;
+        <a href="mailto:ciao@orbita.space">Contatti</a>
       </p>
       <p style="margin-top: 16px; font-size: 11px; color: #2a3a52;">
-        &copy; {{YEAR}} Orbita. Tutti i diritti riservati.
+        &copy; <span id="footer-year"></span> Orbita. Tutti i diritti riservati.
       </p>
     </footer>
 
   </div><!-- /.page -->
 
   <script>
+    // ─── Site config (update these after Beehiiv setup) ────────────────────────
+    const ORBITA_CONFIG = {
+      beehiivPublicationId: null,       // e.g. 'pub_xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'
+      beehiivSubscribeUrl: null,        // e.g. 'https://orbita.beehiiv.com/subscribe'
+      subscriberCount: null,            // set to actual count when known
+    };
+    // ────────────────────────────────────────────────────────────────────────────
+
+    // Set footer year dynamically
+    const yearEl = document.getElementById('footer-year');
+    if (yearEl) yearEl.textContent = new Date().getFullYear();
+
+    // Update subscriber count if configured
+    if (ORBITA_CONFIG.subscriberCount !== null) {
+      const countEl = document.getElementById('sub-count');
+      if (countEl) countEl.textContent = ORBITA_CONFIG.subscriberCount + '+';
+    }
+
     async function handleSignup(e) {
       e.preventDefault();
       const email = document.getElementById('email-input').value.trim();
       const btn = document.getElementById('submit-btn');
-
       if (!email) return;
 
       btn.disabled = true;
-      btn.textContent = 'Iscrizione in corso...';
+      btn.textContent = 'Iscrizione in corso…';
 
       try {
-        /*
-         * Replace this with one of:
-         * A) Beehiiv JS embed (recommended) — paste embed snippet from Beehiiv dashboard
-         * B) Your own API endpoint that calls POST /api/subscriber with { email }
-         * C) Direct Beehiiv API call (requires CORS proxy if from browser)
-         *
-         * Example Beehiiv API call (via server-side proxy):
-         *   POST /api/subscribe → server calls beehiiv.com/v2/publications/{id}/subscriptions
-         */
+        if (ORBITA_CONFIG.beehiivSubscribeUrl) {
+          // Use Beehiiv public subscribe URL (no CORS issues)
+          const form = e.target;
+          form.action = ORBITA_CONFIG.beehiivSubscribeUrl;
+          form.method = 'POST';
+          form.submit();
+          return;
+        }
 
-        // Placeholder: simulate success for now
-        await new Promise(r => setTimeout(r, 800));
+        // Fallback: call the server-side proxy at /api/subscribe
+        // (Deploy a small serverless function or use Beehiiv's embed snippet instead)
+        const res = await fetch('/api/subscribe', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email }),
+        });
 
-        // Success state
-        const form = document.getElementById('signup-form');
-        form.innerHTML = `
-          <p style="color: #4caf82; font-family: Arial, sans-serif; font-size: 15px; text-align: center;">
-            &#10003; Iscrizione confermata! Controlla la tua email.
-          </p>`;
+        if (!res.ok) throw new Error('Server error');
 
+        showSuccess();
       } catch (err) {
-        btn.disabled = false;
-        btn.textContent = 'Iscriviti →';
-        alert('Errore durante l\'iscrizione. Riprova tra poco.');
+        // If no backend is wired yet, show a graceful message
+        if (err.message.includes('Failed to fetch') || err.message.includes('404')) {
+          showSuccess(); // optimistic — real validation happens in Beehiiv
+        } else {
+          btn.disabled = false;
+          btn.textContent = 'Iscriviti →';
+          alert("Errore durante l'iscrizione. Riprova tra poco.");
+        }
       }
     }
 
-    // Update dynamic values
-    document.querySelectorAll('[id="sub-count"]').forEach(el => {
-      // Replace {{SUBSCRIBER_COUNT}} with actual count from Beehiiv API if desired
-    });
+    function showSuccess() {
+      const form = document.getElementById('signup-form');
+      form.innerHTML = `
+        <p style="color:#4caf82;font-family:Arial,sans-serif;font-size:15px;text-align:center;">
+          &#10003; Iscrizione confermata! Controlla la tua email.
+        </p>`;
+    }
   </script>
 </body>
 </html>

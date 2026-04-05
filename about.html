@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Chi siamo — Orbita, newsletter spaziale settimanale italiana.">
+  <title>Chi siamo — Orbita</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy: #0a0e1a;
+      --navy-mid: #0d1124;
+      --navy-light: #0f1f3d;
+      --blue: #1a3a6e;
+      --blue-accent: #3a7fd4;
+      --blue-light: #7eb8f7;
+      --text-primary: #c9d8f0;
+      --text-secondary: #8fa8c8;
+      --text-muted: #5a7fa8;
+      --border: #1e2a4a;
+    }
+
+    html { font-size: 16px; scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--navy);
+      color: var(--text-primary);
+      font-family: 'Georgia', serif;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        radial-gradient(1px 1px at 10% 20%, rgba(126,184,247,0.6) 0%, transparent 100%),
+        radial-gradient(1px 1px at 30% 70%, rgba(126,184,247,0.4) 0%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 50% 40%, rgba(200,220,255,0.5) 0%, transparent 100%),
+        radial-gradient(1px 1px at 70% 10%, rgba(126,184,247,0.5) 0%, transparent 100%),
+        radial-gradient(1px 1px at 85% 60%, rgba(126,184,247,0.3) 0%, transparent 100%),
+        radial-gradient(1px 1px at 20% 90%, rgba(126,184,247,0.4) 0%, transparent 100%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .page {
+      position: relative;
+      z-index: 1;
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 24px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .logo {
+      font-family: 'Arial', sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--blue-light);
+      text-decoration: none;
+    }
+
+    .logo span { color: #fff; }
+
+    .nav-link {
+      font-size: 12px;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-family: 'Arial', sans-serif;
+      text-transform: uppercase;
+    }
+
+    .nav-link:hover { color: var(--blue-light); }
+
+    .hero {
+      padding: 72px 0 48px;
+    }
+
+    .hero-badge {
+      display: inline-block;
+      font-size: 11px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--blue-accent);
+      font-family: 'Arial', sans-serif;
+      border: 1px solid var(--blue);
+      border-radius: 20px;
+      padding: 5px 16px;
+      margin-bottom: 24px;
+    }
+
+    .hero h1 {
+      font-size: clamp(28px, 5vw, 42px);
+      line-height: 1.2;
+      color: #fff;
+      margin-bottom: 20px;
+      font-weight: normal;
+    }
+
+    .hero h1 em {
+      font-style: normal;
+      color: var(--blue-light);
+    }
+
+    .section {
+      padding: 40px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section-title {
+      font-size: 11px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--blue-accent);
+      font-family: 'Arial', sans-serif;
+      margin-bottom: 20px;
+    }
+
+    .prose p {
+      font-size: 17px;
+      color: var(--text-secondary);
+      margin-bottom: 16px;
+      line-height: 1.75;
+    }
+
+    .prose p:last-child { margin-bottom: 0; }
+
+    .prose strong { color: var(--text-primary); font-weight: normal; font-style: italic; }
+
+    .values-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 24px;
+    }
+
+    .value-card {
+      background-color: var(--navy-mid);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px;
+    }
+
+    .value-icon {
+      font-size: 22px;
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    .value-card h3 {
+      font-size: 14px;
+      font-family: 'Arial', sans-serif;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 6px;
+    }
+
+    .value-card p {
+      font-size: 13px;
+      color: var(--text-muted);
+      font-family: 'Arial', sans-serif;
+      line-height: 1.5;
+    }
+
+    .channels-section {
+      padding: 40px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .channel-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .channel-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background-color: var(--navy-mid);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px 16px;
+      text-decoration: none;
+      transition: border-color 0.2s;
+    }
+
+    .channel-row:hover { border-color: var(--blue-accent); }
+
+    .channel-row-name {
+      font-size: 13px;
+      font-family: 'Arial', sans-serif;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .channel-row-handle {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-family: 'Arial', sans-serif;
+    }
+
+    .cta-section {
+      padding: 56px 0;
+      text-align: center;
+    }
+
+    .cta-section h2 {
+      font-size: clamp(22px, 4vw, 32px);
+      color: #fff;
+      font-weight: normal;
+      margin-bottom: 12px;
+    }
+
+    .cta-section p {
+      font-size: 16px;
+      color: var(--text-secondary);
+      margin-bottom: 28px;
+    }
+
+    .cta-btn {
+      display: inline-block;
+      padding: 14px 32px;
+      background-color: var(--blue);
+      color: var(--blue-light);
+      border: 1px solid var(--blue-accent);
+      border-radius: 6px;
+      font-size: 14px;
+      font-family: 'Arial', sans-serif;
+      letter-spacing: 1px;
+      text-decoration: none;
+      transition: background-color 0.2s;
+    }
+
+    .cta-btn:hover { background-color: #1e4a8a; }
+
+    footer {
+      padding: 32px 0;
+      text-align: center;
+      border-top: 1px solid var(--border);
+    }
+
+    footer p {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-family: 'Arial', sans-serif;
+      margin-bottom: 6px;
+    }
+
+    footer a { color: var(--blue-accent); text-decoration: none; }
+
+    @media (max-width: 560px) {
+      .values-grid { grid-template-columns: 1fr; }
+      .channel-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+
+    <!-- NAV -->
+    <nav>
+      <a href="index.html" class="logo">Or<span>bita</span></a>
+      <div style="display:flex;gap:20px;">
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="index.html#archivio" class="nav-link">Archivio</a>
+      </div>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-badge">&#127760; Chi siamo</div>
+      <h1>Raccontiamo lo spazio<br>in <em>italiano</em></h1>
+      <div class="prose">
+        <p>
+          <strong>Orbita</strong> è una newsletter settimanale dedicata alle notizie spaziali
+          e aeronautiche. Ogni domenica mattina portiamo nella tua inbox le storie che contano:
+          lanci, missioni, scoperte scientifiche, industria e politica spaziale.
+        </p>
+        <p>
+          Scriviamo per chi vuole capire — non solo sentire — cosa sta succedendo
+          nell'universo. Senza gergo inutile, con la profondità che l'argomento merita.
+        </p>
+      </div>
+    </section>
+
+    <!-- MISSION -->
+    <section class="section">
+      <p class="section-title">La nostra missione</p>
+      <div class="prose">
+        <p>
+          Crediamo che l'esplorazione spaziale sia uno degli sforzi più straordinari
+          dell'umanità — e che meriti una narrazione all'altezza. Non titoli clickbait,
+          non comunicati stampa riciclati: giornalismo spaziale fatto con cura.
+        </p>
+        <p>
+          Pubblichiamo anche sui principali canali social, portando ogni giorno
+          aggiornamenti immediati su lanci, annunci e scoperte.
+        </p>
+      </div>
+      <div class="values-grid">
+        <div class="value-card">
+          <span class="value-icon">&#9888;</span>
+          <h3>Accuratezza</h3>
+          <p>Verifichiamo le fonti. Distinguiamo tra ipotesi e fatti accertati.</p>
+        </div>
+        <div class="value-card">
+          <span class="value-icon">&#128270;</span>
+          <h3>Profondità</h3>
+          <p>Ogni edizione va oltre il titolo. Il contesto è parte della storia.</p>
+        </div>
+        <div class="value-card">
+          <span class="value-icon">&#127760;</span>
+          <h3>Italiano</h3>
+          <p>Notizie spaziali in italiano di qualità sono ancora rare. Ci proviamo noi.</p>
+        </div>
+        <div class="value-card">
+          <span class="value-icon">&#128100;</span>
+          <h3>Comunità</h3>
+          <p>Costruiamo una comunità di appassionati e professionisti del settore.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- CHANNELS -->
+    <section class="channels-section">
+      <p class="section-title">Dove ci trovi</p>
+      <p style="font-size:14px;color:var(--text-muted);font-family:Arial,sans-serif;margin-bottom:0;">
+        Seguici su tutti i canali social per aggiornamenti quotidiani.
+      </p>
+      <div class="channel-grid">
+        <a href="#" class="channel-row">
+          <span style="font-size:20px;">&#120143;</span>
+          <div>
+            <div class="channel-row-name">X / Twitter</div>
+            <div class="channel-row-handle">@orbitanews</div>
+          </div>
+        </a>
+        <a href="#" class="channel-row">
+          <span style="font-size:20px;">in</span>
+          <div>
+            <div class="channel-row-name">LinkedIn</div>
+            <div class="channel-row-handle">Orbita Newsletter</div>
+          </div>
+        </a>
+        <a href="#" class="channel-row">
+          <span style="font-size:20px;">&#128247;</span>
+          <div>
+            <div class="channel-row-name">Instagram</div>
+            <div class="channel-row-handle">@orbitanews</div>
+          </div>
+        </a>
+        <a href="#" class="channel-row">
+          <span style="font-size:20px;">&#9654;</span>
+          <div>
+            <div class="channel-row-name">YouTube</div>
+            <div class="channel-row-handle">Orbita</div>
+          </div>
+        </a>
+        <a href="#" class="channel-row">
+          <span style="font-size:20px;">&#127918;</span>
+          <div>
+            <div class="channel-row-name">TikTok</div>
+            <div class="channel-row-handle">@orbitanews</div>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-section">
+      <h2>Pronto a partire?</h2>
+      <p>Iscriviti gratuitamente. Ogni domenica mattina, nella tua inbox.</p>
+      <a href="index.html#signup" class="cta-btn">Iscriviti alla newsletter &rarr;</a>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+      <p><strong>Orbita</strong> &mdash; Notizie spaziali e aeronautiche</p>
+      <p>
+        <a href="privacy.html">Privacy</a> &middot;
+        <a href="mailto:ciao@orbita.space">Contatti</a>
+      </p>
+      <p style="margin-top: 16px; font-size: 11px; color: #2a3a52;">
+        &copy; <span id="footer-year"></span> Orbita. Tutti i diritti riservati.
+      </p>
+    </footer>
+
+  </div>
+
+  <script>
+    document.getElementById('footer-year').textContent = new Date().getFullYear();
+
+    // Update social channel links when handles are configured
+    const SOCIAL_HANDLES = {
+      x: null,          // e.g. 'https://x.com/orbitanews'
+      linkedin: null,   // e.g. 'https://linkedin.com/company/orbita'
+      instagram: null,  // e.g. 'https://instagram.com/orbitanews'
+      youtube: null,    // e.g. 'https://youtube.com/@orbita'
+      tiktok: null,     // e.g. 'https://tiktok.com/@orbitanews'
+    };
+
+    const channelLinks = document.querySelectorAll('.channel-row');
+    const handles = Object.values(SOCIAL_HANDLES);
+    channelLinks.forEach((link, i) => {
+      if (handles[i]) link.href = handles[i];
+    });
+  </script>
+</body>
+</html>

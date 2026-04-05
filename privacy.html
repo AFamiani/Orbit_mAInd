@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Privacy Policy — Orbita</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --navy: #0a0e1a; --navy-mid: #0d1124; --blue: #1a3a6e;
+      --blue-accent: #3a7fd4; --blue-light: #7eb8f7;
+      --text-primary: #c9d8f0; --text-secondary: #8fa8c8;
+      --text-muted: #5a7fa8; --border: #1e2a4a;
+    }
+    body { background: var(--navy); color: var(--text-primary); font-family: Georgia, serif; line-height: 1.7; min-height: 100vh; }
+    .page { max-width: 680px; margin: 0 auto; padding: 0 24px; }
+    nav { display: flex; align-items: center; justify-content: space-between; padding: 24px 0; border-bottom: 1px solid var(--border); }
+    .logo { font-family: Arial, sans-serif; font-size: 18px; font-weight: 700; letter-spacing: 4px; text-transform: uppercase; color: var(--blue-light); text-decoration: none; }
+    .logo span { color: #fff; }
+    .nav-link { font-size: 12px; letter-spacing: 1px; color: var(--text-muted); text-decoration: none; font-family: Arial, sans-serif; text-transform: uppercase; }
+    .nav-link:hover { color: var(--blue-light); }
+    .content { padding: 56px 0; }
+    h1 { font-size: 32px; color: #fff; font-weight: normal; margin-bottom: 8px; }
+    .updated { font-size: 13px; color: var(--text-muted); font-family: Arial, sans-serif; margin-bottom: 40px; }
+    h2 { font-size: 16px; font-family: Arial, sans-serif; color: var(--blue-light); letter-spacing: 1px; margin: 32px 0 12px; text-transform: uppercase; font-size: 12px; }
+    p { font-size: 16px; color: var(--text-secondary); margin-bottom: 16px; }
+    a { color: var(--blue-accent); }
+    footer { padding: 32px 0; text-align: center; border-top: 1px solid var(--border); }
+    footer p { font-size: 12px; color: var(--text-muted); font-family: Arial, sans-serif; }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <nav>
+      <a href="index.html" class="logo">Or<span>bita</span></a>
+      <a href="index.html" class="nav-link">Home</a>
+    </nav>
+    <div class="content">
+      <h1>Privacy Policy</h1>
+      <p class="updated">Ultimo aggiornamento: <span id="updated-date"></span></p>
+
+      <h2>Titolare del trattamento</h2>
+      <p>Orbita Newsletter — <a href="mailto:ciao@orbita.space">ciao@orbita.space</a></p>
+
+      <h2>Dati raccolti</h2>
+      <p>
+        Raccogliamo esclusivamente il tuo indirizzo email quando ti iscrivi alla newsletter.
+        Non raccogliamo dati di navigazione, non utilizziamo cookie di profilazione e non
+        vendiamo i tuoi dati a terze parti.
+      </p>
+
+      <h2>Finalità del trattamento</h2>
+      <p>
+        Il tuo indirizzo email viene utilizzato unicamente per inviarti la newsletter Orbita
+        e le comunicazioni correlate. La base giuridica è il consenso esplicito fornito
+        al momento dell'iscrizione.
+      </p>
+
+      <h2>Servizi terzi</h2>
+      <p>
+        La gestione delle iscrizioni e l'invio della newsletter avvengono tramite
+        <strong>Beehiiv</strong> (beehiiv.com). Consulta la
+        <a href="https://www.beehiiv.com/privacy" target="_blank" rel="noopener">privacy policy di Beehiiv</a>
+        per i dettagli sul trattamento dei dati da parte del fornitore.
+      </p>
+
+      <h2>Cancellazione</h2>
+      <p>
+        Puoi cancellare la tua iscrizione in qualsiasi momento cliccando il link
+        "Cancella iscrizione" in fondo a ogni email.
+      </p>
+
+      <h2>Contatti</h2>
+      <p>
+        Per qualsiasi richiesta relativa alla privacy scrivi a
+        <a href="mailto:ciao@orbita.space">ciao@orbita.space</a>.
+      </p>
+    </div>
+    <footer>
+      <p>&copy; <span id="footer-year"></span> Orbita. Tutti i diritti riservati.</p>
+    </footer>
+  </div>
+  <script>
+    const y = new Date().getFullYear();
+    document.getElementById('footer-year').textContent = y;
+    document.getElementById('updated-date').textContent = new Date().toLocaleDateString('it-IT', { year: 'numeric', month: 'long', day: 'numeric' });
+  </script>
+</body>
+</html>
