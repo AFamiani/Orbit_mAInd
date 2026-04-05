@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Orbita Weekly — {{ISSUE_DATE}}</title>
+  <style>
+    /* Reset */
+    body, table, td, a { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
+    table, td { mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
+    img { -ms-interpolation-mode: bicubic; border: 0; outline: none; text-decoration: none; }
+
+    /* Base */
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #0a0e1a;
+      font-family: 'Georgia', serif;
+      color: #e8eaf6;
+    }
+
+    .email-wrapper {
+      width: 100%;
+      background-color: #0a0e1a;
+      padding: 24px 0;
+    }
+
+    .email-container {
+      max-width: 620px;
+      margin: 0 auto;
+      background-color: #0d1124;
+      border: 1px solid #1e2a4a;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    /* Header */
+    .header {
+      background: linear-gradient(135deg, #0d1124 0%, #0f1f3d 50%, #0a0e1a 100%);
+      border-bottom: 2px solid #1a3a6e;
+      padding: 32px 40px 24px;
+      text-align: center;
+    }
+
+    .header-logo {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: 4px;
+      color: #7eb8f7;
+      text-transform: uppercase;
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+    }
+
+    .header-logo span {
+      color: #ffffff;
+    }
+
+    .header-tagline {
+      font-size: 12px;
+      letter-spacing: 2px;
+      color: #5a7fa8;
+      text-transform: uppercase;
+      margin: 8px 0 0;
+      font-family: 'Arial', sans-serif;
+    }
+
+    .issue-meta {
+      font-size: 11px;
+      color: #3d5a7a;
+      margin: 16px 0 0;
+      font-family: 'Arial', sans-serif;
+      letter-spacing: 1px;
+    }
+
+    /* Divider */
+    .divider {
+      height: 1px;
+      background: linear-gradient(to right, transparent, #1e3a6a, transparent);
+      margin: 0 40px;
+    }
+
+    /* Body */
+    .body-content {
+      padding: 32px 40px;
+    }
+
+    /* Section labels */
+    .section-label {
+      font-size: 10px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #3a7fd4;
+      font-family: 'Arial', sans-serif;
+      margin: 32px 0 8px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid #1a2e50;
+    }
+
+    .section-label:first-child {
+      margin-top: 0;
+    }
+
+    /* COPERTINA — cover story */
+    .cover-story h2 {
+      font-size: 24px;
+      line-height: 1.3;
+      color: #c9d8f0;
+      margin: 0 0 12px;
+      font-family: 'Georgia', serif;
+    }
+
+    .cover-story .lead {
+      font-size: 15px;
+      line-height: 1.7;
+      color: #8fa8c8;
+      font-style: italic;
+      margin: 0 0 16px;
+      padding-left: 16px;
+      border-left: 3px solid #2a5fa8;
+    }
+
+    .cover-story p {
+      font-size: 15px;
+      line-height: 1.8;
+      color: #b0c4de;
+      margin: 0 0 14px;
+    }
+
+    .read-more {
+      display: inline-block;
+      margin-top: 8px;
+      padding: 8px 20px;
+      background-color: #1a3a6e;
+      color: #7eb8f7;
+      text-decoration: none;
+      font-size: 12px;
+      letter-spacing: 1px;
+      font-family: 'Arial', sans-serif;
+      border-radius: 4px;
+      border: 1px solid #2a5fa8;
+    }
+
+    /* BREVI — short news */
+    .brief-item {
+      padding: 14px 0;
+      border-bottom: 1px solid #111d35;
+    }
+
+    .brief-item:last-child {
+      border-bottom: none;
+    }
+
+    .brief-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #c9d8f0;
+      font-family: 'Arial', sans-serif;
+      margin: 0 0 4px;
+    }
+
+    .brief-title a {
+      color: #7eb8f7;
+      text-decoration: none;
+    }
+
+    .brief-body {
+      font-size: 13px;
+      line-height: 1.6;
+      color: #8fa8c8;
+      margin: 0;
+    }
+
+    /* LANCIO — launches */
+    .launch-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      font-family: 'Arial', sans-serif;
+    }
+
+    .launch-table th {
+      text-align: left;
+      color: #3a7fd4;
+      font-size: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 6px 8px;
+      border-bottom: 1px solid #1a2e50;
+    }
+
+    .launch-table td {
+      padding: 10px 8px;
+      color: #8fa8c8;
+      border-bottom: 1px solid #0d1a30;
+      vertical-align: top;
+    }
+
+    .launch-table .vehicle {
+      color: #c9d8f0;
+      font-weight: 600;
+    }
+
+    .launch-table .status-go {
+      color: #4caf82;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .launch-table .status-tbd {
+      color: #a0a0a0;
+      font-size: 11px;
+    }
+
+    /* Link section */
+    .link-item {
+      padding: 10px 0;
+      border-bottom: 1px solid #111d35;
+    }
+
+    .link-item:last-child {
+      border-bottom: none;
+    }
+
+    .link-item a {
+      font-size: 14px;
+      color: #7eb8f7;
+      text-decoration: none;
+      font-family: 'Arial', sans-serif;
+    }
+
+    .link-item .link-source {
+      font-size: 11px;
+      color: #3d5a7a;
+      font-family: 'Arial', sans-serif;
+      margin: 2px 0 0;
+    }
+
+    /* Footer */
+    .footer {
+      background-color: #080c18;
+      border-top: 1px solid #1a2e50;
+      padding: 24px 40px;
+      text-align: center;
+    }
+
+    .footer p {
+      font-size: 11px;
+      color: #3d5a7a;
+      margin: 4px 0;
+      font-family: 'Arial', sans-serif;
+    }
+
+    .footer a {
+      color: #3a7fd4;
+      text-decoration: none;
+    }
+
+    /* Responsive */
+    @media only screen and (max-width: 620px) {
+      .email-container { margin: 0 !important; border-radius: 0 !important; }
+      .body-content, .header, .footer { padding: 24px 20px !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="email-wrapper">
+    <div class="email-container">
+
+      <!-- HEADER -->
+      <div class="header">
+        <p class="header-logo">OR<span>BITA</span></p>
+        <p class="header-tagline">Notizie dallo spazio e dall'aeronautica</p>
+        <p class="issue-meta">NUMERO {{ISSUE_NUMBER}} &middot; {{ISSUE_DATE}} &middot; {{SUBSCRIBER_COUNT}} lettori</p>
+      </div>
+
+      <div class="body-content">
+
+        <!-- COPERTINA -->
+        <p class="section-label">&#9733; Copertina</p>
+        <div class="cover-story">
+          <h2>{{COVER_HEADLINE}}</h2>
+          <p class="lead">{{COVER_LEAD}}</p>
+          <p>{{COVER_BODY_1}}</p>
+          <p>{{COVER_BODY_2}}</p>
+          <a href="{{COVER_LINK}}" class="read-more">Leggi di pi&ugrave; &rarr;</a>
+        </div>
+
+        <div class="divider" style="margin: 24px 0;"></div>
+
+        <!-- BREVI -->
+        <p class="section-label">&#9671; Brevi</p>
+        <div>
+          <!-- Repeat .brief-item for each story -->
+          <div class="brief-item">
+            <p class="brief-title"><a href="{{BRIEF_1_LINK}}">{{BRIEF_1_TITLE}}</a></p>
+            <p class="brief-body">{{BRIEF_1_BODY}}</p>
+          </div>
+          <div class="brief-item">
+            <p class="brief-title"><a href="{{BRIEF_2_LINK}}">{{BRIEF_2_TITLE}}</a></p>
+            <p class="brief-body">{{BRIEF_2_BODY}}</p>
+          </div>
+          <div class="brief-item">
+            <p class="brief-title"><a href="{{BRIEF_3_LINK}}">{{BRIEF_3_TITLE}}</a></p>
+            <p class="brief-body">{{BRIEF_3_BODY}}</p>
+          </div>
+          <div class="brief-item">
+            <p class="brief-title"><a href="{{BRIEF_4_LINK}}">{{BRIEF_4_TITLE}}</a></p>
+            <p class="brief-body">{{BRIEF_4_BODY}}</p>
+          </div>
+          <div class="brief-item">
+            <p class="brief-title"><a href="{{BRIEF_5_LINK}}">{{BRIEF_5_TITLE}}</a></p>
+            <p class="brief-body">{{BRIEF_5_BODY}}</p>
+          </div>
+        </div>
+
+        <div class="divider" style="margin: 24px 0;"></div>
+
+        <!-- LANCIO -->
+        <p class="section-label">&#128640; Lanci della settimana</p>
+        <table class="launch-table">
+          <thead>
+            <tr>
+              <th>Data</th>
+              <th>Missione</th>
+              <th>Operatore</th>
+              <th>Stato</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Repeat rows as needed -->
+            <tr>
+              <td>{{LAUNCH_1_DATE}}</td>
+              <td class="vehicle">{{LAUNCH_1_MISSION}}</td>
+              <td>{{LAUNCH_1_OPERATOR}}</td>
+              <td><span class="status-go">GO</span></td>
+            </tr>
+            <tr>
+              <td>{{LAUNCH_2_DATE}}</td>
+              <td class="vehicle">{{LAUNCH_2_MISSION}}</td>
+              <td>{{LAUNCH_2_OPERATOR}}</td>
+              <td><span class="status-tbd">TBD</span></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="divider" style="margin: 24px 0;"></div>
+
+        <!-- LINK DELLA SETTIMANA -->
+        <p class="section-label">&#128279; Link della settimana</p>
+        <div>
+          <div class="link-item">
+            <a href="{{LINK_1_URL}}">{{LINK_1_TITLE}}</a>
+            <p class="link-source">via {{LINK_1_SOURCE}}</p>
+          </div>
+          <div class="link-item">
+            <a href="{{LINK_2_URL}}">{{LINK_2_TITLE}}</a>
+            <p class="link-source">via {{LINK_2_SOURCE}}</p>
+          </div>
+          <div class="link-item">
+            <a href="{{LINK_3_URL}}">{{LINK_3_TITLE}}</a>
+            <p class="link-source">via {{LINK_3_SOURCE}}</p>
+          </div>
+        </div>
+
+      </div><!-- /.body-content -->
+
+      <!-- FOOTER -->
+      <div class="footer">
+        <p><strong style="color:#5a7fa8;">Orbita</strong> &mdash; Notizie spaziali ogni settimana</p>
+        <p>Hai ricevuto questa email perch&eacute; sei iscritto ad Orbita.</p>
+        <p>
+          <a href="{{UNSUBSCRIBE_URL}}">Cancella iscrizione</a> &middot;
+          <a href="{{PREFERENCES_URL}}">Preferenze</a> &middot;
+          <a href="{{WEB_VERSION_URL}}">Leggi online</a>
+        </p>
+        <p style="margin-top: 12px; color: #242f47;">
+          Orbita &copy; {{YEAR}} &middot; Tutti i diritti riservati
+        </p>
+      </div>
+
+    </div><!-- /.email-container -->
+  </div><!-- /.email-wrapper -->
+</body>
+</html>

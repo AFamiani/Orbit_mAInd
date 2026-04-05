@@ -1,0 +1,147 @@
+{
+  "_comment": "Orbita — Curated space and aerospace news sources for the aggregation pipeline.",
+  "last_updated": "2026-04-05",
+
+  "rss_feeds": [
+    {
+      "name": "NASA Breaking News",
+      "url": "https://www.nasa.gov/rss/dyn/breaking_news.rss",
+      "language": "en",
+      "category": "agency",
+      "weight": 1.4,
+      "enabled": true
+    },
+    {
+      "name": "ESA Space Science",
+      "url": "https://www.esa.int/rssfeed/Our_Activities/Space_Science",
+      "language": "en",
+      "category": "agency",
+      "weight": 1.4,
+      "enabled": true
+    },
+    {
+      "name": "NASASpaceFlight",
+      "url": "https://www.nasaspaceflight.com/feed/",
+      "language": "en",
+      "category": "news",
+      "weight": 1.3,
+      "enabled": true
+    },
+    {
+      "name": "Spaceflight Now",
+      "url": "https://spaceflightnow.com/feed/",
+      "language": "en",
+      "category": "news",
+      "weight": 1.2,
+      "enabled": true
+    },
+    {
+      "name": "SpaceNews",
+      "url": "https://spacenews.com/feed/",
+      "language": "en",
+      "category": "industry",
+      "weight": 1.2,
+      "enabled": true
+    },
+    {
+      "name": "Ars Technica Science",
+      "url": "https://arstechnica.com/science/feed/",
+      "language": "en",
+      "category": "news",
+      "weight": 1.1,
+      "enabled": true
+    },
+    {
+      "name": "Space.com",
+      "url": "https://www.space.com/feeds/all",
+      "language": "en",
+      "category": "news",
+      "weight": 1.0,
+      "enabled": true
+    },
+    {
+      "name": "Planetary Society",
+      "url": "https://www.planetary.org/news/rss.xml",
+      "language": "en",
+      "category": "science",
+      "weight": 1.1,
+      "enabled": true
+    },
+    {
+      "name": "Aviation Week",
+      "url": "https://aviationweek.com/rss.xml",
+      "language": "en",
+      "category": "aerospace",
+      "weight": 1.1,
+      "enabled": true
+    },
+    {
+      "name": "INAF Media (Italian)",
+      "url": "https://www.media.inaf.it/feed/",
+      "language": "it",
+      "category": "science",
+      "weight": 1.4,
+      "enabled": true,
+      "note": "Italian National Institute for Astrophysics — highest priority Italian source"
+    },
+    {
+      "name": "Astronomia.com (Italian)",
+      "url": "https://www.astronomia.com/feed/",
+      "language": "it",
+      "category": "science",
+      "weight": 1.2,
+      "enabled": true
+    },
+    {
+      "name": "Astronauti News (Italian)",
+      "url": "https://www.astronautinews.it/feed/",
+      "language": "it",
+      "category": "news",
+      "weight": 1.3,
+      "enabled": true
+    }
+  ],
+
+  "apis": [
+    {
+      "name": "NASA APOD",
+      "description": "Astronomy Picture of the Day — good for social media content",
+      "endpoint": "https://api.nasa.gov/planetary/apod",
+      "auth": "api_key",
+      "key_env": "NASA_API_KEY",
+      "free_key": "DEMO_KEY",
+      "enabled": true
+    },
+    {
+      "name": "The Space Devs Launch Library",
+      "description": "Upcoming rocket launch data — powers the LANCIO section",
+      "endpoint": "https://ll.thespacedevs.com/2.2.0/launch/upcoming/",
+      "auth": "none",
+      "docs": "https://thespacedevs.com/llapi",
+      "enabled": true,
+      "params": {
+        "format": "json",
+        "limit": 10,
+        "ordering": "net"
+      }
+    }
+  ],
+
+  "keywords": {
+    "high_priority": [
+      "launch", "rocket", "spacecraft", "astronaut", "satellite", "moon", "mars",
+      "artemis", "spacex", "falcon", "starship", "nasa", "esa", "roscosmos",
+      "iss", "webb", "hubble", "exoplanet", "asteroid", "mission", "orbit",
+      "landing", "discovery", "telescope", "probe", "rover", "payload",
+      "lancio", "razzo", "astronauta", "luna", "marte", "spazio", "missione",
+      "scoperta", "telescopio", "sonda", "veicolo spaziale"
+    ],
+    "aerospace": [
+      "aircraft", "aviation", "airbus", "boeing", "supersonic", "hypersonic",
+      "drone", "UAV", "eVTOL", "jet", "aereo", "aviazione", "supersonico"
+    ],
+    "deprioritize": [
+      "opinion", "review", "deal", "discount", "quiz", "horoscope", "gaming"
+    ]
+  }
+}

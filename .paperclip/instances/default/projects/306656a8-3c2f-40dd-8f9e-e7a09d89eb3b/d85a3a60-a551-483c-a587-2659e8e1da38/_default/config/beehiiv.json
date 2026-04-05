@@ -1,0 +1,78 @@
+{
+  "_comment": "Orbita — Beehiiv publication configuration. Fill in values after account creation.",
+
+  "publication": {
+    "name": "Orbita",
+    "tagline": "Notizie spaziali e aeronautiche ogni settimana",
+    "language": "it",
+    "niche": "space-aerospace",
+    "sending_schedule": {
+      "day": "sunday",
+      "time": "08:00",
+      "timezone": "Europe/Rome"
+    }
+  },
+
+  "api": {
+    "base_url": "https://api.beehiiv.com/v2",
+    "publication_id": "REPLACE_WITH_PUBLICATION_ID",
+    "api_key_env": "BEEHIIV_API_KEY"
+  },
+
+  "branding": {
+    "primary_color": "#1a3a6e",
+    "accent_color": "#7eb8f7",
+    "background_color": "#0a0e1a",
+    "font_heading": "Georgia",
+    "font_body": "Georgia",
+    "logo_url": "REPLACE_WITH_LOGO_URL"
+  },
+
+  "domain": {
+    "custom_domain": "REPLACE_WITH_CUSTOM_DOMAIN",
+    "dns_records": {
+      "note": "Add these records to your DNS registrar after setting up custom domain in Beehiiv",
+      "cname": "newsletter → newsletters.beehiiv.com",
+      "spf": "v=spf1 include:beehiiv.com ~all",
+      "dkim": "see Beehiiv Settings > Domain Authentication for the DKIM record",
+      "dmarc": "v=DMARC1; p=none; rua=mailto:dmarc@YOURDOMAIN.com"
+    }
+  },
+
+  "automation": {
+    "welcome_email": {
+      "enabled": true,
+      "template": "templates/welcome_email.html",
+      "subject": "Benvenuto su Orbita! 🚀",
+      "delay_minutes": 0
+    },
+    "weekly_digest": {
+      "enabled": true,
+      "template": "templates/newsletter_issue.html",
+      "aggregator_script": "scripts/news_aggregator.py",
+      "auto_draft": true,
+      "requires_editorial_review": true
+    }
+  },
+
+  "social_channels": {
+    "x_twitter": "REPLACE_WITH_X_HANDLE",
+    "linkedin": "REPLACE_WITH_LINKEDIN_URL",
+    "instagram": "REPLACE_WITH_INSTAGRAM_HANDLE",
+    "youtube": "REPLACE_WITH_YOUTUBE_CHANNEL",
+    "tiktok": "REPLACE_WITH_TIKTOK_HANDLE"
+  },
+
+  "setup_checklist": [
+    { "step": 1, "action": "Create Beehiiv account at beehiiv.com", "owner": "Board", "done": false },
+    { "step": 2, "action": "Set publication name and language", "owner": "Board", "done": false },
+    { "step": 3, "action": "Upload brand logo and set colors", "owner": "Board/UX", "done": false },
+    { "step": 4, "action": "Configure custom domain DNS records", "owner": "Board", "done": false },
+    { "step": 5, "action": "Generate Beehiiv API key and share with CTO", "owner": "Board", "done": false },
+    { "step": 6, "action": "Fill in publication_id and api_key_env above", "owner": "CTO", "done": false },
+    { "step": 7, "action": "Deploy landing page to static host", "owner": "CTO", "done": false },
+    { "step": 8, "action": "Test welcome email automation", "owner": "CTO", "done": false },
+    { "step": 9, "action": "Run news_aggregator.py --output beehiiv for first draft", "owner": "CTO", "done": false },
+    { "step": 10, "action": "Send first newsletter issue", "owner": "CTO + Board", "done": false }
+  ]
+}
