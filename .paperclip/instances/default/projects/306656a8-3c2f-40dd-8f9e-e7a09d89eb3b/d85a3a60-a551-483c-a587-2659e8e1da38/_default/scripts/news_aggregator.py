@@ -1,14 +1,20 @@
 """
 Orbita News Aggregator
 ======================
-Polls RSS feeds from major space/aerospace news sources,
-scores articles by relevance, deduplicates, and outputs a
-structured digest ready for editorial review or Beehiiv API ingestion.
+Polls RSS feeds from major space/aerospace news sources AND public APIs
+(NASA APOD, Space Devs Launch Library), scores articles by relevance,
+deduplicates, and outputs a structured digest ready for editorial review
+or Beehiiv API ingestion.
 
 Usage:
     python news_aggregator.py                  # Print digest to stdout
     python news_aggregator.py --output json    # Output JSON file
     python news_aggregator.py --output beehiiv # Push draft to Beehiiv (requires API key)
+
+Environment variables:
+    NASA_API_KEY            NASA API key (optional; uses DEMO_KEY if unset)
+    BEEHIIV_API_KEY         Required for --output beehiiv
+    BEEHIIV_PUBLICATION_ID  Required for --output beehiiv
 
 Requirements:
     pip install feedparser requests python-dateutil
@@ -158,12 +164,79 @@ def deduplicate(articles: list[dict]) -> list[dict]:
     return unique
 
 
+def fetch_upcoming_launches(limit: int = 5) -> list[dict]:
+    """
+    Fetch upcoming rocket launches from The Space Devs Launch Library v2 API.
+    Returns a list of structured launch dicts (no auth required).
+    """
+    url = "https://ll.thespacedevs.com/2.2.0/launch/upcoming/"
+    params = {"format": "json", "limit": limit, "ordering": "net"}
+    launches = []
+
+    try:
+        resp = requests.get(url, params=params, timeout=15)
+        resp.raise_for_status()
+        data = resp.json()
+        for launch in data.get("results", []):
+            net = launch.get("net", "")
+            mission = launch.get("mission") or {}
+            rocket = launch.get("rocket", {}).get("configuration", {})
+            pad = launch.get("pad", {})
+            launches.append({
+                "name": launch.get("name", "Unknown launch"),
+                "rocket": rocket.get("name", "Unknown rocket"),
+                "net": net,                              # NET = No Earlier Than (ISO8601)
+                "launch_service_provider": launch.get("launch_service_provider", {}).get("name", ""),
+                "mission_description": mission.get("description", ""),
+                "pad_name": pad.get("name", ""),
+                "pad_location": pad.get("location", {}).get("name", ""),
+                "status": launch.get("status", {}).get("name", ""),
+                "url": launch.get("url", ""),
+            })
+        print(f"  [Space Devs] {len(launches)} upcoming launches", file=sys.stderr)
+    except Exception as exc:
+        print(f"[WARN] Space Devs API unavailable: {exc}", file=sys.stderr)
+
+    return launches
+
+
+def fetch_nasa_apod(api_key: Optional[str] = None) -> Optional[dict]:
+    """
+    Fetch NASA Astronomy Picture of the Day.
+    Returns a dict with title, explanation, url, media_type.
+    Uses DEMO_KEY if no api_key is provided (rate-limited: 30 req/hour).
+    """
+    key = api_key or os.environ.get("NASA_API_KEY", "DEMO_KEY")
+    url = "https://api.nasa.gov/planetary/apod"
+
+    try:
+        resp = requests.get(url, params={"api_key": key}, timeout=10)
+        resp.raise_for_status()
+        data = resp.json()
+        apod = {
+            "title": data.get("title", ""),
+            "explanation": data.get("explanation", "")[:400],
+            "date": data.get("date", ""),
+            "url": data.get("url", ""),
+            "hdurl": data.get("hdurl", data.get("url", "")),
+            "media_type": data.get("media_type", "image"),
+            "copyright": data.get("copyright", "NASA"),
+        }
+        print(f"  [NASA APOD] '{apod['title']}'", file=sys.stderr)
+        return apod
+    except Exception as exc:
+        print(f"[WARN] NASA APOD unavailable: {exc}", file=sys.stderr)
+        return None
+
+
 def build_digest(
     lookback_hours: int = 168,
     top_n: int = 20,
     brief_n: int = 7,
+    include_launches: bool = True,
+    include_apod: bool = True,
 ) -> dict:
-    """Fetch all feeds and build a ranked digest."""
+    """Fetch all feeds and public API data, then build a ranked digest."""
     all_articles: list[dict] = []
 
     for feed in FEEDS:
@@ -180,6 +253,10 @@ def build_digest(
 
     ranked = sorted(all_articles, key=lambda a: a["score"], reverse=True)[:top_n]
 
+    # Enrich with public API data
+    upcoming_launches = fetch_upcoming_launches() if include_launches else []
+    apod = fetch_nasa_apod() if include_apod else None
+
     digest = {
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "lookback_hours": lookback_hours,
@@ -187,6 +264,8 @@ def build_digest(
         "cover_story": ranked[0] if ranked else None,
         "briefs": ranked[1:brief_n + 1],
         "remaining": ranked[brief_n + 1:],
+        "upcoming_launches": upcoming_launches,
+        "apod": apod,
     }
 
     return digest
@@ -207,11 +286,34 @@ def push_to_beehiiv(digest: dict, api_key: str, publication_id: str) -> None:
 
     cover = digest["cover_story"]
     briefs = digest.get("briefs", [])
+    launches = digest.get("upcoming_launches", [])
+    apod = digest.get("apod")
 
     # Build content body (HTML for Beehiiv)
     briefs_html = ""
     for b in briefs:
         briefs_html += f'<li><a href="{b["link"]}">{b["title"]}</a> — {b["summary"][:120]}…</li>\n'
+
+    launches_html = ""
+    if launches:
+        launches_html = "<hr>\n<h3>🚀 Prossimi Lanci</h3>\n<ul>\n"
+        for lnch in launches[:4]:
+            net_str = lnch["net"][:10] if lnch["net"] else "TBD"
+            launches_html += (
+                f'<li><strong>{lnch["name"]}</strong> — {net_str} '
+                f'({lnch["launch_service_provider"]}) @ {lnch["pad_name"]}</li>\n'
+            )
+        launches_html += "</ul>\n"
+
+    apod_html = ""
+    if apod and apod.get("media_type") == "image":
+        apod_html = (
+            f'<hr>\n<h3>📷 NASA Astronomy Picture of the Day</h3>\n'
+            f'<p><strong>{apod["title"]}</strong></p>\n'
+            f'<img src="{apod["url"]}" alt="{apod["title"]}" style="max-width:100%;">\n'
+            f'<p><em>{apod["explanation"][:300]}…</em></p>\n'
+            f'<p>© {apod.get("copyright", "NASA")}</p>\n'
+        )
 
     body_html = f"""
 <h2>{cover['title']}</h2>
@@ -224,6 +326,8 @@ def push_to_beehiiv(digest: dict, api_key: str, publication_id: str) -> None:
 <ul>
 {briefs_html}
 </ul>
+{launches_html}
+{apod_html}
 """
 
     payload = {
@@ -282,10 +386,25 @@ def main() -> None:
         default="digest.json",
         help="Output file path for --output json (default: digest.json)",
     )
+    parser.add_argument(
+        "--no-launches",
+        action="store_true",
+        help="Skip the Space Devs upcoming launches API call",
+    )
+    parser.add_argument(
+        "--no-apod",
+        action="store_true",
+        help="Skip the NASA APOD API call",
+    )
     args = parser.parse_args()
 
     print(f"Orbita Aggregator — fetching news ({args.lookback}h lookback)...", file=sys.stderr)
-    digest = build_digest(lookback_hours=args.lookback, top_n=args.top)
+    digest = build_digest(
+        lookback_hours=args.lookback,
+        top_n=args.top,
+        include_launches=not args.no_launches,
+        include_apod=not args.no_apod,
+    )
 
     if args.output == "print":
         print("\n" + "=" * 60)
@@ -301,6 +420,18 @@ def main() -> None:
         print(f"\n[BREVI] ({len(digest['briefs'])} items)")
         for i, b in enumerate(digest["briefs"], 1):
             print(f"  {i}. {b['title']} [{b['source']}] score={b['score']:.1f}")
+
+        launches = digest.get("upcoming_launches", [])
+        if launches:
+            print(f"\n[PROSSIMI LANCI] ({len(launches)} items)")
+            for lnch in launches:
+                net = lnch["net"][:10] if lnch["net"] else "TBD"
+                print(f"  • {lnch['name']} — {net} ({lnch['launch_service_provider']})")
+
+        apod = digest.get("apod")
+        if apod:
+            print(f"\n[NASA APOD] {apod['date']}: {apod['title']}")
+            print(f"  {apod['url']}")
 
         print(f"\nTotal fetched: {digest['total_fetched']} unique articles")
         print("=" * 60)
