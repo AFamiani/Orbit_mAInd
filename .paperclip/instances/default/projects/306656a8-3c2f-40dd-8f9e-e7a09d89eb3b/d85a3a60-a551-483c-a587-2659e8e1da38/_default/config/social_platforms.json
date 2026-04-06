@@ -12,8 +12,14 @@
       },
       "settings": {
         "max_chars": 280,
+        "link_chars_reserved": 23,
         "thread_on_overflow": true,
-        "default_hashtags": ["#Space", "#Spazio", "#Aeronautica", "#AstroNews"]
+        "default_hashtags": [
+          "#Space", "#Spazio", "#Aeronautica", "#AstroNews",
+          "#NASA", "#ESA", "#SpaceX", "#Astronomia"
+        ],
+        "optimal_post_times_utc": ["07:00", "12:00", "19:00"],
+        "notes": "Links count as 23 chars (t.co). Keep first tweet under 280 chars including link and hashtags. Thread replies carry the summary."
       }
     },
     "linkedin": {
@@ -24,7 +30,14 @@
       },
       "settings": {
         "max_chars": 3000,
-        "default_hashtags": ["#Space", "#Aerospace", "#SpaceNews", "#Spazio"]
+        "recommended_chars": 1300,
+        "default_hashtags": [
+          "#Space", "#Aerospace", "#SpaceNews", "#Spazio",
+          "#Aviation", "#SpaceTech", "#SpaceIndustry", "#Aeronautica",
+          "#ScienceAndTechnology", "#Innovation"
+        ],
+        "optimal_post_times_utc": ["08:00", "12:00", "17:00"],
+        "notes": "Professional tone. Lead with emoji + headline, follow with summary (max 800 chars), cite source, include link, close with hashtags on separate lines."
       }
     },
     "instagram": {
@@ -35,10 +48,16 @@
       },
       "settings": {
         "max_caption_chars": 2200,
+        "recommended_caption_chars": 300,
         "default_hashtags": [
           "#space", "#spazio", "#astronomia", "#nasa", "#esa",
-          "#razzo", "#astronauta", "#universo", "#cosmo", "#scienza"
-        ]
+          "#razzo", "#astronauta", "#universo", "#cosmo", "#scienza",
+          "#spacex", "#aeronautica", "#terra", "#luna", "#marte",
+          "#sistema_solare", "#galileo", "#hubble", "#james_webb",
+          "#orbita", "#notizie_spazio", "#scienzaitaliana"
+        ],
+        "optimal_post_times_utc": ["09:00", "12:00", "18:00"],
+        "notes": "No clickable links in captions — always use 'Link in bio'. Requires an image (image_url). Uses Meta Graph API v19.0. Hashtags go at the end of caption."
       }
     },
     "youtube": {
@@ -48,9 +67,17 @@
         "channel_id": "YOUTUBE_CHANNEL_ID"
       },
       "settings": {
+        "max_title_chars": 100,
+        "max_description_chars": 5000,
         "default_category_id": "28",
-        "default_tags": ["space", "spazio", "aerospace", "news", "orbita"],
-        "privacy_status": "public"
+        "default_tags": [
+          "space", "spazio", "aerospace", "news", "orbita",
+          "nasa", "esa", "spacex", "astronomia", "aeronautica",
+          "notizie spazio", "scienza", "tecnologia spaziale"
+        ],
+        "privacy_status": "public",
+        "optimal_post_times_utc": ["14:00", "18:00"],
+        "notes": "Category 28 = Science & Technology. Video must be uploaded separately; this script outputs metadata only. Shorts recommended for news clips (max 60s)."
       }
     },
     "tiktok": {
@@ -61,7 +88,14 @@
       },
       "settings": {
         "max_caption_chars": 2200,
-        "default_hashtags": ["#space", "#spazio", "#nasa", "#razzo", "#scienza"]
+        "recommended_hook_chars": 100,
+        "default_hashtags": [
+          "#space", "#spazio", "#nasa", "#razzo", "#scienza",
+          "#tiktokscienza", "#cosmologia", "#esplorazionespaziale",
+          "#spacex", "#esa", "#universo", "#fyp", "#foryou"
+        ],
+        "optimal_post_times_utc": ["12:00", "19:00", "21:00"],
+        "notes": "Hook must be punchy and within first 100 chars. Video is required (video_url). Uses TikTok Content Posting API v2. Hashtags #fyp and #foryou help with algorithm reach."
       }
     }
   },
