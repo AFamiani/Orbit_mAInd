@@ -10,6 +10,7 @@ Usage:
     python news_aggregator.py                  # Print digest to stdout
     python news_aggregator.py --output json    # Output JSON file
     python news_aggregator.py --output beehiiv # Push draft to Beehiiv (requires API key)
+    python news_aggregator.py --verbose        # Enable DEBUG logging
 
 Environment variables:
     NASA_API_KEY            NASA API key (optional; uses DEMO_KEY if unset)
@@ -23,8 +24,10 @@ Requirements:
 import argparse
 import hashlib
 import json
+import logging
 import os
 import sys
+import time
 from datetime import datetime, timedelta, timezone
 from typing import Optional
 
@@ -36,6 +39,8 @@ except ImportError:
     sys.exit(
         "Missing dependencies. Run: pip install feedparser requests python-dateutil"
     )
+
+log = logging.getLogger("orbita")
 
 
 # ---------------------------------------------------------------------------
@@ -79,50 +84,131 @@ DEPRIORITIZE_KEYWORDS = [
     "unboxing", "gaming", "movie", "book",
 ]
 
+MIN_ARTICLES_SUCCESS = 5  # Exit code 1 if fewer articles collected
+
+
+# ---------------------------------------------------------------------------
+# Logging setup
+# ---------------------------------------------------------------------------
+
+def setup_logging(verbose: bool = False) -> None:
+    level = logging.DEBUG if verbose else logging.INFO
+    logging.basicConfig(
+        format="%(asctime)s [%(levelname)s] %(message)s",
+        datefmt="%Y-%m-%dT%H:%M:%S",
+        level=level,
+        stream=sys.stderr,
+    )
+
+
+# ---------------------------------------------------------------------------
+# HTTP with retries
+# ---------------------------------------------------------------------------
+
+def fetch_with_retry(
+    url: str,
+    *,
+    timeout: int = 15,
+    max_attempts: int = 3,
+    **kwargs,
+) -> requests.Response:
+    """GET url with up to max_attempts attempts and exponential backoff.
+
+    Retries only on connection errors and timeouts (transient failures).
+    HTTP 4xx/5xx errors are raised immediately without retry.
+    """
+    last_exc: Exception = RuntimeError("No attempts made")
+    for attempt in range(max_attempts):
+        try:
+            resp = requests.get(url, timeout=timeout, **kwargs)
+            resp.raise_for_status()
+            return resp
+        except requests.HTTPError:
+            # Client/server HTTP errors — don't retry
+            raise
+        except (requests.ConnectionError, requests.Timeout) as exc:
+            last_exc = exc
+            if attempt < max_attempts - 1:
+                wait = 2 ** attempt  # 1s, 2s, 4s
+                log.debug(
+                    "Attempt %d/%d failed for %s (%s); retrying in %ds",
+                    attempt + 1, max_attempts, url, exc, wait,
+                )
+                time.sleep(wait)
+    raise last_exc
+
+
+def post_with_retry(
+    url: str,
+    *,
+    timeout: int = 30,
+    max_attempts: int = 3,
+    **kwargs,
+) -> requests.Response:
+    """POST url with up to max_attempts attempts and exponential backoff.
+
+    Retries only on connection errors and timeouts.
+    HTTP errors are returned as-is (caller decides what to do).
+    """
+    last_exc: Exception = RuntimeError("No attempts made")
+    for attempt in range(max_attempts):
+        try:
+            resp = requests.post(url, timeout=timeout, **kwargs)
+            return resp
+        except (requests.ConnectionError, requests.Timeout) as exc:
+            last_exc = exc
+            if attempt < max_attempts - 1:
+                wait = 2 ** attempt
+                log.debug(
+                    "POST attempt %d/%d failed for %s (%s); retrying in %ds",
+                    attempt + 1, max_attempts, url, exc, wait,
+                )
+                time.sleep(wait)
+    raise last_exc
+
 
 # ---------------------------------------------------------------------------
 # Core logic
 # ---------------------------------------------------------------------------
 
 def fetch_feed(feed_config: dict, lookback_hours: int = 168) -> list[dict]:
-    """Fetch and parse a single RSS feed, filtering to articles within the lookback window."""
+    """Fetch and parse a single RSS feed, filtering to articles within the lookback window.
+
+    Raises on failure — callers should catch and count errors per-feed.
+    """
     cutoff = datetime.now(timezone.utc) - timedelta(hours=lookback_hours)
     articles = []
 
-    try:
-        parsed = feedparser.parse(feed_config["url"])
-        for entry in parsed.entries:
-            # Parse publication date
-            pub_date = None
-            for date_field in ("published_parsed", "updated_parsed"):
-                if hasattr(entry, date_field) and getattr(entry, date_field):
-                    import time
-                    ts = time.mktime(getattr(entry, date_field))
-                    pub_date = datetime.fromtimestamp(ts, tz=timezone.utc)
-                    break
+    resp = fetch_with_retry(feed_config["url"])
+    parsed = feedparser.parse(resp.content)
 
-            if pub_date is None or pub_date < cutoff:
-                continue
+    for entry in parsed.entries:
+        pub_date = None
+        for date_field in ("published_parsed", "updated_parsed"):
+            if hasattr(entry, date_field) and getattr(entry, date_field):
+                ts = time.mktime(getattr(entry, date_field))
+                pub_date = datetime.fromtimestamp(ts, tz=timezone.utc)
+                break
 
-            title = getattr(entry, "title", "").strip()
-            summary = getattr(entry, "summary", "").strip()
-            link = getattr(entry, "link", "").strip()
+        if pub_date is None or pub_date < cutoff:
+            continue
 
-            if not title or not link:
-                continue
+        title = getattr(entry, "title", "").strip()
+        summary = getattr(entry, "summary", "").strip()
+        link = getattr(entry, "link", "").strip()
 
-            articles.append({
-                "title": title,
-                "summary": summary[:500] if summary else "",
-                "link": link,
-                "source": feed_config["source"],
-                "published": pub_date.isoformat(),
-                "source_weight": feed_config.get("weight", 1.0),
-                "fingerprint": hashlib.md5(link.encode()).hexdigest(),
-            })
+        if not title or not link:
+            continue
 
-    except Exception as exc:
-        print(f"[WARN] Failed to fetch {feed_config['source']}: {exc}", file=sys.stderr)
+        articles.append({
+            "title": title,
+            "summary": summary[:500] if summary else "",
+            "link": link,
+            "source": feed_config["source"],
+            "published": pub_date.isoformat(),
+            "source_weight": feed_config.get("weight", 1.0),
+            "fingerprint": hashlib.md5(link.encode()).hexdigest(),
+        })
 
     return articles
 
@@ -174,8 +260,7 @@ def fetch_upcoming_launches(limit: int = 5) -> list[dict]:
     launches = []
 
     try:
-        resp = requests.get(url, params=params, timeout=15)
-        resp.raise_for_status()
+        resp = fetch_with_retry(url, params=params)
         data = resp.json()
         for launch in data.get("results", []):
             net = launch.get("net", "")
@@ -185,7 +270,7 @@ def fetch_upcoming_launches(limit: int = 5) -> list[dict]:
             launches.append({
                 "name": launch.get("name", "Unknown launch"),
                 "rocket": rocket.get("name", "Unknown rocket"),
-                "net": net,                              # NET = No Earlier Than (ISO8601)
+                "net": net,
                 "launch_service_provider": launch.get("launch_service_provider", {}).get("name", ""),
                 "mission_description": mission.get("description", ""),
                 "pad_name": pad.get("name", ""),
@@ -193,9 +278,9 @@ def fetch_upcoming_launches(limit: int = 5) -> list[dict]:
                 "status": launch.get("status", {}).get("name", ""),
                 "url": launch.get("url", ""),
             })
-        print(f"  [Space Devs] {len(launches)} upcoming launches", file=sys.stderr)
+        log.info("[Space Devs] %d upcoming launches fetched", len(launches))
     except Exception as exc:
-        print(f"[WARN] Space Devs API unavailable: {exc}", file=sys.stderr)
+        log.warning("Space Devs API unavailable: %s", exc)
 
     return launches
 
@@ -210,8 +295,7 @@ def fetch_nasa_apod(api_key: Optional[str] = None) -> Optional[dict]:
     url = "https://api.nasa.gov/planetary/apod"
 
     try:
-        resp = requests.get(url, params={"api_key": key}, timeout=10)
-        resp.raise_for_status()
+        resp = fetch_with_retry(url, params={"api_key": key})
         data = resp.json()
         apod = {
             "title": data.get("title", ""),
@@ -222,10 +306,10 @@ def fetch_nasa_apod(api_key: Optional[str] = None) -> Optional[dict]:
             "media_type": data.get("media_type", "image"),
             "copyright": data.get("copyright", "NASA"),
         }
-        print(f"  [NASA APOD] '{apod['title']}'", file=sys.stderr)
+        log.info("[NASA APOD] '%s'", apod["title"])
         return apod
     except Exception as exc:
-        print(f"[WARN] NASA APOD unavailable: {exc}", file=sys.stderr)
+        log.warning("NASA APOD unavailable: %s", exc)
         return None
 
 
@@ -238,11 +322,21 @@ def build_digest(
 ) -> dict:
     """Fetch all feeds and public API data, then build a ranked digest."""
     all_articles: list[dict] = []
+    feeds_attempted = 0
+    feeds_failed = 0
+    feed_errors: list[str] = []
 
     for feed in FEEDS:
-        articles = fetch_feed(feed, lookback_hours=lookback_hours)
-        all_articles.extend(articles)
-        print(f"  [{feed['source']}] {len(articles)} articles", file=sys.stderr)
+        feeds_attempted += 1
+        try:
+            articles = fetch_feed(feed, lookback_hours=lookback_hours)
+            log.info("[%s] %d articles", feed["source"], len(articles))
+            all_articles.extend(articles)
+        except Exception as exc:
+            feeds_failed += 1
+            msg = f"{feed['source']}: {exc}"
+            feed_errors.append(msg)
+            log.warning("Failed to fetch %s: %s", feed["source"], exc)
 
     # Deduplicate
     all_articles = deduplicate(all_articles)
@@ -261,6 +355,9 @@ def build_digest(
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "lookback_hours": lookback_hours,
         "total_fetched": len(all_articles),
+        "feeds_attempted": feeds_attempted,
+        "feeds_failed": feeds_failed,
+        "feed_errors": feed_errors,
         "cover_story": ranked[0] if ranked else None,
         "briefs": ranked[1:brief_n + 1],
         "remaining": ranked[brief_n + 1:],
@@ -347,15 +444,16 @@ def save_html_digest(digest: dict, out_dir: str = "digests") -> str:
     return filename
 
 
-def push_to_beehiiv(digest: dict, api_key: str, publication_id: str) -> None:
+def push_to_beehiiv(digest: dict, api_key: str, publication_id: str) -> Optional[str]:
     """
     Create a draft post on Beehiiv from the digest.
     API docs: https://developers.beehiiv.com/docs/v2
     Falls back to saving a local HTML file if the API returns 403 (plan restriction).
+    Returns the output path or draft ID for the run summary.
     """
     if not digest.get("cover_story"):
-        print("[ERROR] No cover story in digest — cannot create Beehiiv draft.", file=sys.stderr)
-        return
+        log.error("No cover story in digest — cannot create Beehiiv draft.")
+        return None
 
     _, title, body_html = build_html_body(digest)
     cover = digest["cover_story"]
@@ -369,37 +467,41 @@ def push_to_beehiiv(digest: dict, api_key: str, publication_id: str) -> None:
         "content_tags": ["space", "aeronautics", "weekly"],
     }
 
-    resp = requests.post(
-        f"https://api.beehiiv.com/v2/publications/{publication_id}/posts",
-        headers={
-            "Authorization": f"Bearer {api_key}",
-            "Content-Type": "application/json",
-        },
-        json=payload,
-        timeout=30,
-    )
+    try:
+        resp = post_with_retry(
+            f"https://api.beehiiv.com/v2/publications/{publication_id}/posts",
+            headers={
+                "Authorization": f"Bearer {api_key}",
+                "Content-Type": "application/json",
+            },
+            json=payload,
+        )
+    except Exception as exc:
+        log.error("Beehiiv API request failed: %s", exc)
+        return None
 
     if resp.status_code in (200, 201):
         data = resp.json()
         post_id = data.get("data", {}).get("id", "unknown")
-        print(f"[OK] Draft created on Beehiiv: post_id={post_id}")
+        log.info("Draft created on Beehiiv: post_id=%s", post_id)
+        return f"beehiiv:{post_id}"
     elif resp.status_code == 403:
         err = resp.json().get("errors", [{}])[0]
         code = err.get("code", "")
-        print(
-            f"[WARN] Beehiiv API 403 ({code}): API post creation requires a paid plan.\n"
-            "       Saving HTML digest locally as fallback.",
-            file=sys.stderr,
+        log.warning(
+            "Beehiiv API 403 (%s): API post creation requires a paid plan. Saving HTML locally.",
+            code,
         )
         path = save_html_digest(digest)
-        print(f"[OK] HTML digest saved to: {path}")
-        print(
-            "       Upload it manually at: https://app.beehiiv.com/posts/new\n"
-            "       Or upgrade your Beehiiv plan to enable API post creation.",
-            file=sys.stderr,
+        log.info("HTML digest saved to: %s", path)
+        log.info(
+            "Upload manually at: https://app.beehiiv.com/posts/new "
+            "(or upgrade Beehiiv plan to enable API post creation)"
         )
+        return path
     else:
-        print(f"[ERROR] Beehiiv API error {resp.status_code}: {resp.text}", file=sys.stderr)
+        log.error("Beehiiv API error %d: %s", resp.status_code, resp.text)
+        return None
 
 
 # ---------------------------------------------------------------------------
@@ -441,15 +543,24 @@ def main() -> None:
         action="store_true",
         help="Skip the NASA APOD API call",
     )
+    parser.add_argument(
+        "--verbose",
+        action="store_true",
+        help="Enable DEBUG logging",
+    )
     args = parser.parse_args()
 
-    print(f"Orbita Aggregator — fetching news ({args.lookback}h lookback)...", file=sys.stderr)
+    setup_logging(verbose=args.verbose)
+
+    log.info("Orbita Aggregator — fetching news (%dh lookback)...", args.lookback)
     digest = build_digest(
         lookback_hours=args.lookback,
         top_n=args.top,
         include_launches=not args.no_launches,
         include_apod=not args.no_apod,
     )
+
+    output_ref: Optional[str] = None
 
     if args.output == "print":
         print("\n" + "=" * 60)
@@ -480,11 +591,13 @@ def main() -> None:
 
         print(f"\nTotal fetched: {digest['total_fetched']} unique articles")
         print("=" * 60)
+        output_ref = "stdout"
 
     elif args.output == "json":
         with open(args.out_file, "w", encoding="utf-8") as f:
             json.dump(digest, f, indent=2, ensure_ascii=False)
-        print(f"[OK] Digest written to {args.out_file}", file=sys.stderr)
+        log.info("Digest written to %s", args.out_file)
+        output_ref = args.out_file
 
     elif args.output == "beehiiv":
         api_key = os.environ.get("BEEHIIV_API_KEY")
@@ -493,7 +606,35 @@ def main() -> None:
             sys.exit(
                 "[ERROR] Set BEEHIIV_API_KEY and BEEHIIV_PUBLICATION_ID environment variables."
             )
-        push_to_beehiiv(digest, api_key=api_key, publication_id=publication_id)
+        output_ref = push_to_beehiiv(digest, api_key=api_key, publication_id=publication_id)
+
+    # -----------------------------------------------------------------------
+    # Run summary
+    # -----------------------------------------------------------------------
+    total = digest["total_fetched"]
+    attempted = digest["feeds_attempted"]
+    failed = digest["feeds_failed"]
+    errors = digest.get("feed_errors", [])
+
+    log.info(
+        "=== Run summary === feeds: %d/%d ok | articles: %d unique | errors: %d | output: %s",
+        attempted - failed, attempted, total, failed, output_ref or "none",
+    )
+    if errors:
+        for err in errors:
+            log.warning("  Feed error: %s", err)
+
+    # -----------------------------------------------------------------------
+    # Exit code
+    # -----------------------------------------------------------------------
+    if total < MIN_ARTICLES_SUCCESS:
+        log.error(
+            "Only %d articles collected (minimum %d required) — exiting with code 1",
+            total, MIN_ARTICLES_SUCCESS,
+        )
+        sys.exit(1)
+
+    sys.exit(0)
 
 
 if __name__ == "__main__":
