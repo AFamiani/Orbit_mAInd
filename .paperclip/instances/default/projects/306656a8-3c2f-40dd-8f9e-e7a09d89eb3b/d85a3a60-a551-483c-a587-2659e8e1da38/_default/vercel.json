@@ -1,11 +1,14 @@
 {
+  "version": 2,
   "name": "orbita",
-  "public": true,
-  "outputDirectory": "landing-page",
+  "builds": [
+    { "src": "landing-page/**", "use": "@vercel/static" }
+  ],
   "routes": [
-    { "src": "/about", "dest": "/about.html" },
-    { "src": "/privacy", "dest": "/privacy.html" },
-    { "src": "/(.*)", "dest": "/$1" }
+    { "src": "/about", "dest": "/landing-page/about.html" },
+    { "src": "/privacy", "dest": "/landing-page/privacy.html" },
+    { "src": "/", "dest": "/landing-page/index.html" },
+    { "src": "/(.*)", "dest": "/landing-page/$1" }
   ],
   "headers": [
     {
