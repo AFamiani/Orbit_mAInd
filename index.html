@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="it">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Orbita — Notizie spaziali e aeronautiche ogni settimana. Iscriviti alla newsletter.">
-  <title>Orbita — Newsletter Spaziale</title>
+  <meta name="description" content="Orbit mAInd — Space and aeronautical news every week. Subscribe to the newsletter.">
+  <title>Orbit mAInd — Space Newsletter</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -50,7 +50,6 @@
       z-index: 0;
     }
 
-    /* Layout */
     .page {
       position: relative;
       z-index: 1;
@@ -59,7 +58,6 @@
       padding: 0 24px;
     }
 
-    /* Nav */
     nav {
       display: flex;
       align-items: center;
@@ -72,7 +70,7 @@
       font-family: 'Arial', sans-serif;
       font-size: 18px;
       font-weight: 700;
-      letter-spacing: 4px;
+      letter-spacing: 2px;
       text-transform: uppercase;
       color: var(--blue-light);
     }
@@ -90,7 +88,6 @@
 
     .nav-archive:hover { color: var(--blue-light); }
 
-    /* Hero */
     .hero {
       padding: 72px 0 56px;
       text-align: center;
@@ -129,7 +126,6 @@
       margin: 0 auto 40px;
     }
 
-    /* Signup form */
     .signup-box {
       background-color: var(--navy-mid);
       border: 1px solid var(--border);
@@ -204,14 +200,6 @@
       text-align: center;
     }
 
-    /* Beehiiv embed fallback */
-    .beehiiv-embed {
-      width: 100%;
-      border: none;
-      min-height: 80px;
-    }
-
-    /* Social proof */
     .social-proof {
       display: flex;
       justify-content: center;
@@ -220,9 +208,7 @@
       border-bottom: 1px solid var(--border);
     }
 
-    .stat {
-      text-align: center;
-    }
+    .stat { text-align: center; }
 
     .stat-number {
       font-size: 28px;
@@ -240,7 +226,6 @@
       font-family: 'Arial', sans-serif;
     }
 
-    /* What's inside */
     .what-inside {
       padding: 48px 0;
       border-bottom: 1px solid var(--border);
@@ -289,7 +274,6 @@
       line-height: 1.5;
     }
 
-    /* Channels */
     .channels {
       padding: 40px 0;
       text-align: center;
@@ -321,7 +305,6 @@
       padding: 5px 14px;
     }
 
-    /* Footer */
     footer {
       padding: 32px 0;
       text-align: center;
@@ -349,45 +332,40 @@
 
     <!-- NAV -->
     <nav>
-      <span class="logo">Or<span>bita</span></span>
+      <span class="logo">Orbit <span>mAInd</span></span>
       <div style="display:flex;gap:20px;align-items:center;">
-        <a href="about.html" class="nav-archive">Chi siamo</a>
-        <a href="#archivio" class="nav-archive">Archivio</a>
+        <a href="about.html" class="nav-archive">About</a>
+        <a href="#archive" class="nav-archive">Archive</a>
       </div>
     </nav>
 
     <!-- HERO -->
     <section class="hero">
-      <div class="hero-badge">&#127760; Newsletter Settimanale</div>
-      <h1>Lo spazio,<br>ogni domenica<br>nella tua <em>inbox</em></h1>
+      <div class="hero-badge">&#127760; Weekly Newsletter</div>
+      <h1>Space & aerospace,<br>every week<br>in your <em>inbox</em></h1>
       <p>
-        Notizie su lanci, missioni, scoperte scientifiche e industria spaziale —
-        curate ogni settimana per chi vuole capire l'universo.
+        News on launches, missions, scientific discoveries, and the space industry —
+        curated weekly for anyone who wants to understand the universe.
       </p>
 
       <!-- SIGNUP BOX -->
       <div id="signup" class="signup-box">
-        <h2>Iscriviti gratuitamente</h2>
-        <p>Ogni domenica mattina. Niente spam, cancellazione in un click.</p>
+        <h2>Subscribe for free</h2>
+        <p>Every week. No spam, unsubscribe anytime.</p>
 
-        <!--
-          OPTION A: Native form (replace action URL with your backend/Beehiiv endpoint)
-          OPTION B: Replace this entire section with Beehiiv embed snippet from:
-                    Beehiiv > Settings > Embed & Share > Copy embed code
-        -->
         <form id="signup-form" onsubmit="handleSignup(event)">
           <div class="form-row">
             <input
               type="email"
               id="email-input"
-              placeholder="la.tua@email.com"
+              placeholder="your@email.com"
               required
               autocomplete="email"
             >
-            <button type="submit" id="submit-btn">Iscriviti &rarr;</button>
+            <button type="submit" id="submit-btn">Subscribe &rarr;</button>
           </div>
         </form>
-        <p class="signup-note">Gratis &middot; Cancellazione in un click</p>
+        <p class="signup-note">Free &middot; Unsubscribe with one click</p>
       </div>
     </section>
 
@@ -395,48 +373,48 @@
     <div class="social-proof">
       <div class="stat">
         <span class="stat-number" id="sub-count">0+</span>
-        <span class="stat-label">Iscritti</span>
+        <span class="stat-label">Subscribers</span>
       </div>
       <div class="stat">
         <span class="stat-number">5</span>
-        <span class="stat-label">Canali social</span>
+        <span class="stat-label">Social channels</span>
       </div>
       <div class="stat">
-        <span class="stat-number">Ogni dom</span>
-        <span class="stat-label">Cadenza</span>
+        <span class="stat-number">Weekly</span>
+        <span class="stat-label">Frequency</span>
       </div>
     </div>
 
     <!-- WHAT'S INSIDE -->
     <section class="what-inside">
-      <p class="section-title">Cosa trovi ogni settimana</p>
+      <p class="section-title">What you get every week</p>
       <div class="features">
         <div class="feature">
           <span class="feature-icon">&#11088;</span>
-          <h3>Copertina</h3>
-          <p>La notizia della settimana analizzata in profondità.</p>
+          <h3>Cover Story</h3>
+          <p>The week's biggest story, analyzed in depth.</p>
         </div>
         <div class="feature">
           <span class="feature-icon">&#9671;</span>
-          <h3>Brevi</h3>
-          <p>Cinque-sette news veloci dall'industria e dalla ricerca.</p>
+          <h3>Briefs</h3>
+          <p>Five to seven quick news items from industry and research.</p>
         </div>
         <div class="feature">
           <span class="feature-icon">&#128640;</span>
-          <h3>Lanci</h3>
-          <p>Il calendario dei prossimi lanci spaziali con aggiornamenti in tempo reale.</p>
+          <h3>Launches</h3>
+          <p>Upcoming launch calendar with real-time updates.</p>
         </div>
         <div class="feature">
           <span class="feature-icon">&#128279;</span>
-          <h3>Link</h3>
-          <p>I migliori articoli e risorse della settimana, selezionati dalla redazione.</p>
+          <h3>Links</h3>
+          <p>The best articles and resources of the week, hand-picked by our editors.</p>
         </div>
       </div>
     </section>
 
     <!-- SOCIAL CHANNELS -->
     <section class="channels">
-      <p>Seguici anche sui social per aggiornamenti quotidiani</p>
+      <p>Follow us on social media for daily updates</p>
       <div class="channel-list">
         <span class="channel-badge">&#120143; X / Twitter</span>
         <span class="channel-badge">in LinkedIn</span>
@@ -448,86 +426,46 @@
 
     <!-- FOOTER -->
     <footer>
-      <p><strong>Orbita</strong> &mdash; Notizie spaziali e aeronautiche</p>
+      <p><strong>Orbit mAInd</strong> &mdash; Space and aerospace news</p>
       <p>
         <a href="privacy.html">Privacy</a> &middot;
-        <a href="about.html">Chi siamo</a> &middot;
-        <a href="mailto:ciao@orbita.space">Contatti</a>
+        <a href="about.html">About</a> &middot;
+        <a href="mailto:hello@orbitmAInd.com">Contact</a>
       </p>
       <p style="margin-top: 16px; font-size: 11px; color: #2a3a52;">
-        &copy; <span id="footer-year"></span> Orbita. Tutti i diritti riservati.
+        &copy; <span id="footer-year"></span> Orbit mAInd. All rights reserved.
       </p>
     </footer>
 
   </div><!-- /.page -->
 
   <script>
-    // ─── Site config (update these after Beehiiv setup) ────────────────────────
     const ORBITA_CONFIG = {
       beehiivPublicationId: 'pub_bebc369c-8273-41a8-99b3-6c628f1cc5e9',
       beehiivSubscribeUrl: 'https://www.beehiiv.com/subscribe/pub_bebc369c-8273-41a8-99b3-6c628f1cc5e9',
-      subscriberCount: null,            // set to actual count when known
+      subscriberCount: null,
     };
-    // ────────────────────────────────────────────────────────────────────────────
 
-    // Set footer year dynamically (updated)
-    const yearEl = document.getElementById('footer-year');
-    if (yearEl) yearEl.textContent = new Date().getFullYear();
+    document.getElementById('footer-year').textContent = new Date().getFullYear();
 
-    // Update subscriber count if configured
     if (ORBITA_CONFIG.subscriberCount !== null) {
       const countEl = document.getElementById('sub-count');
       if (countEl) countEl.textContent = ORBITA_CONFIG.subscriberCount + '+';
     }
 
-    async function handleSignup(e) {
+    function handleSignup(e) {
       e.preventDefault();
       const email = document.getElementById('email-input').value.trim();
-      const btn = document.getElementById('submit-btn');
       if (!email) return;
 
+      const btn = document.getElementById('submit-btn');
       btn.disabled = true;
-      btn.textContent = 'Iscrizione in corso…';
+      btn.textContent = 'Redirecting…';
 
-      try {
-        if (ORBITA_CONFIG.beehiivSubscribeUrl) {
-          // Use Beehiiv public subscribe URL (no CORS issues)
-          const form = e.target;
-          form.action = ORBITA_CONFIG.beehiivSubscribeUrl;
-          form.method = 'POST';
-          form.submit();
-          return;
-        }
-
-        // Fallback: call the server-side proxy at /api/subscribe
-        // (Deploy a small serverless function or use Beehiiv's embed snippet instead)
-        const res = await fetch('/api/subscribe', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email }),
-        });
-
-        if (!res.ok) throw new Error('Server error');
-
-        showSuccess();
-      } catch (err) {
-        // If no backend is wired yet, show a graceful message
-        if (err.message.includes('Failed to fetch') || err.message.includes('404')) {
-          showSuccess(); // optimistic — real validation happens in Beehiiv
-        } else {
-          btn.disabled = false;
-          btn.textContent = 'Iscriviti →';
-          alert("Errore durante l'iscrizione. Riprova tra poco.");
-        }
-      }
-    }
-
-    function showSuccess() {
-      const form = document.getElementById('signup-form');
-      form.innerHTML = `
-        <p style="color:#4caf82;font-family:Arial,sans-serif;font-size:15px;text-align:center;">
-          &#10003; Iscrizione confermata! Controlla la tua email.
-        </p>`;
+      // Redirect to Beehiiv subscribe page with email pre-filled
+      const url = new URL(ORBITA_CONFIG.beehiivSubscribeUrl);
+      url.searchParams.set('email', email);
+      window.location.href = url.toString();
     }
   </script>
 </body>
