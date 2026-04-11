@@ -453,19 +453,36 @@
       if (countEl) countEl.textContent = ORBITA_CONFIG.subscriberCount + '+';
     }
 
-    function handleSignup(e) {
+    async function handleSignup(e) {
       e.preventDefault();
       const email = document.getElementById('email-input').value.trim();
       if (!email) return;
 
       const btn = document.getElementById('submit-btn');
+      const form = document.getElementById('signup-form');
       btn.disabled = true;
-      btn.textContent = 'Redirecting…';
+      btn.textContent = 'Subscribing…';
 
-      // Redirect to Beehiiv subscribe page with email pre-filled
-      const url = new URL(ORBITA_CONFIG.beehiivSubscribeUrl);
-      url.searchParams.set('email', email);
-      window.location.href = url.toString();
+      try {
+        const res = await fetch('/api/subscribe', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email }),
+        });
+        const data = await res.json();
+
+        if (res.ok && data.success) {
+          form.innerHTML = '<p style="color:#7eb8f7;font-size:1.1em;">&#10003; You\'re in! Check your inbox for a welcome email.</p>';
+        } else {
+          btn.disabled = false;
+          btn.textContent = 'Subscribe \u2192';
+          alert(data.error || 'Something went wrong. Please try again.');
+        }
+      } catch (err) {
+        btn.disabled = false;
+        btn.textContent = 'Subscribe \u2192';
+        alert('Network error. Please try again.');
+      }
     }
   </script>
 </body>
