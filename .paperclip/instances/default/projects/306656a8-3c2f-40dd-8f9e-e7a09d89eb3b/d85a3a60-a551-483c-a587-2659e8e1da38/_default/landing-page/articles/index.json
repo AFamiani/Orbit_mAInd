@@ -1,0 +1,26 @@
+[
+  {
+    "id": "2026-04-10-starship-flight-9",
+    "title": "SpaceX Starship: Flight 9 Preparation Accelerates",
+    "date": "2026-04-10",
+    "tags": ["launch", "spacex", "starship"],
+    "summary": "SpaceX is rapidly advancing preparations for Starship's ninth integrated flight test, with booster stacking and propellant loading tests underway at Boca Chica.",
+    "content": "<p>SpaceX has entered the final phase of preparations for Starship's ninth integrated flight test at the Starbase facility in Boca Chica, Texas. The Super Heavy booster designated B14 has been stacked onto the orbital launch mount, and engineers are conducting a full series of propellant loading and pressurization tests ahead of the static fire campaign.</p><p>The ninth flight marks a critical milestone: SpaceX aims to demonstrate full propellant transfer between header and main tanks in orbit — a technology essential for future lunar missions under NASA's Artemis program. The company also plans to refine the booster catch mechanism at the launch tower, following the successful catches on flights 5 and 7.</p><p>Regulatory approval from the FAA is expected in the coming weeks, contingent on completion of the environmental review process. A launch window is anticipated for late April or early May 2026.</p>"
+  },
+  {
+    "id": "2026-04-09-esa-ariel-launch",
+    "title": "ESA Confirms ARIEL Exoplanet Mission Launch for 2029",
+    "date": "2026-04-09",
+    "tags": ["esa", "mission", "science", "exoplanets"],
+    "summary": "The European Space Agency has confirmed the ARIEL mission will launch in 2029, becoming the first space telescope dedicated to studying exoplanet atmospheres.",
+    "content": "<p>The European Space Agency (ESA) has officially confirmed the launch readiness review schedule for the ARIEL (Atmospheric Remote-sensing Infrared Exoplanet Large-survey) mission, targeting a launch in 2029 aboard an Ariane 6 rocket.</p><p>ARIEL will become the first space mission dedicated entirely to characterizing exoplanet atmospheres, observing over 1,000 planets across their full diversity — from hot Jupiters to super-Earths. The spacecraft will measure chemical fingerprints of gases such as water vapor, carbon dioxide, methane, and ammonia as planets transit their host stars.</p><p>The mission carries scientific instruments provided by 17 European countries, with the UK Space Agency contributing the Fine Guidance Sensor and the photometric and spectrometric unit AIRS. ESA's Science Programme Committee approved the mission's implementation phase, and the spacecraft is currently under assembly at Airbus Defence and Space in Toulouse.</p>"
+  },
+  {
+    "id": "2026-04-08-china-tiangong-crew",
+    "title": "China Launches Shenzhou-20 with Three-Astronaut Crew to Tiangong",
+    "date": "2026-04-08",
+    "tags": ["launch", "china", "crewed", "station"],
+    "summary": "China successfully launched the Shenzhou-20 spacecraft carrying three taikonauts to the Tiangong space station for a six-month mission.",
+    "content": "<p>China launched its Shenzhou-20 crewed spacecraft on a Long March 2F rocket from the Jiuquan Satellite Launch Center on April 8, carrying three taikonauts to the Tiangong space station for a planned six-month mission.</p><p>The crew — Commander Cai Xuzhe, mission specialist Song Lingdong, and Wang Hao — will conduct a comprehensive program of scientific experiments, including materials science studies in microgravity, Earth observation, and technology demonstrations for future deep-space missions.</p><p>The Shenzhou-20 docked with the Tianhe core module approximately six hours after launch. The outgoing Shenzhou-19 crew will hand over operations before returning to Earth later this month, maintaining the station's continuous crewed presence since 2021.</p>"
+  }
+]
