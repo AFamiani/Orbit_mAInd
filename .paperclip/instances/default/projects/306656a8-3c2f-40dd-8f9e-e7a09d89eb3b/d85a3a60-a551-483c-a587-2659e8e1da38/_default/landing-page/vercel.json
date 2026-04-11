@@ -3,6 +3,7 @@
     { "src": "/about", "dest": "/about.html" },
     { "src": "/privacy", "dest": "/privacy.html" },
     { "src": "/news", "dest": "/news.html" },
+    { "src": "/launches", "dest": "/launches.html" },
     { "src": "/(.*)", "dest": "/$1" }
   ],
   "headers": [
